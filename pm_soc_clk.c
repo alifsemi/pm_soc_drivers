@@ -1,8 +1,13 @@
-#include "hostbase.h"
-#include "soc_clk.h"
+#include "soc_aon.h"
+#include "soc_vbat.h"
+#include "soc_hostbase.h"
+#include "pm_soc_clk.h"
 
+/* definitions for SystemAXIClock, SystemAHBClock, SystemAPBClock */
 #include "sys_clocks.h"
-#include "alif.h"
+
+/* definition for SystemCoreClock */
+#include "system.h"
 
 /*----------------------------------------------------------------------------
   Core identification function (0 = RTSS_HP, 1 = RTSS_HE)
@@ -14,31 +19,29 @@ uint32_t CoreID()
 }
 
 /*----------------------------------------------------------------------------
-  SoC Top Clock get divider functions
+  SoC Clock divider functions
  *----------------------------------------------------------------------------*/
 static uint32_t GetDividerActiveHFRC() {
-    uint32_t shift_val = (ANA->VBAT_ANA_REG2 >> 11) & 7U;
+    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 >> 11) & 7U;
     return shift_val;
 }
 
 static uint32_t GetDividerStandbyHFRC() {
-    uint32_t shift_val = (ANA->VBAT_ANA_REG2 >> 19) & 7U;
-    if (shift_val > 7) {
-        shift_val -= 8;
-        if (shift_val > 6) shift_val += 3;          // 2^(7   + 3) = 1024 (75k)
-        else if (shift_val > 3) shift_val += 2;     // 2^(4-6 + 2) = 64-256 (1.2M-300k)
-        else if (shift_val > 2) shift_val += 1;     // 2^(3   + 1) = 16 (4.8M)
-                                                    // 2^(0-2 + 0) = 1-4 (76.8M-19.2M)
-    }
+    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 >> 19) & 7U;
+
+    if (shift_val > 6) shift_val += 3;          // 2^(7   + 3) = 1024 (75k)
+    else if (shift_val > 3) shift_val += 2;     // 2^(4-6 + 2) = 64-256 (1.2M-300k)
+    else if (shift_val > 2) shift_val += 1;     // 2^(3   + 1) = 16 (4.8M)
+                                                // 2^(0-2 + 0) = 1-4 (76.8M-19.2M)
     return shift_val;
 }
 
 static uint32_t GetDividerActiveHFXO() {
     uint32_t shift_val;
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
-    shift_val = ((AON->MISC_REG1 >> 17) & 15U);
+    shift_val = ((AONALL->MISC_REG1 >> 17) & 15U);
 #else
-    shift_val = ((AON->MISC_REG1 >> 13) & 15U);
+    shift_val = ((AONALL->MISC_REG1 >> 13) & 15U);
 #endif
 
     if (shift_val > 7) {
@@ -52,26 +55,26 @@ static uint32_t GetDividerActiveHFXO() {
 }
 
 /*----------------------------------------------------------------------------
-  SoC Top Clock update functions
+  SoC Clock update functions
  *----------------------------------------------------------------------------*/
 
-uint32_t SocTopClockHFRC()
+uint32_t pm_soc_clk_get_hfrc()
 {
     return 76800000 >> GetDividerActiveHFRC();
 }
 
-uint32_t SocTopClockHFXO()
+uint32_t pm_soc_clk_get_hfxo()
 {
     return 38400000 >> GetDividerActiveHFXO();
 }
 
-uint32_t SocTopClockHFOSC()
+uint32_t pm_soc_clk_get_hfosc()
 {
     if (CGU->OSC_CTRL & (1 << 4)) {
-        SystemHFOSCClock = SocTopClockHFXO();
+        SystemHFOSCClock = pm_soc_clk_get_hfxo();
     }
     else {
-        SystemHFOSCClock = SocTopClockHFRC() >> 1;
+        SystemHFOSCClock = pm_soc_clk_get_hfrc() >> 1;
     }
 
     return SystemHFOSCClock;
@@ -80,7 +83,7 @@ uint32_t SocTopClockHFOSC()
 /*----------------------------------------------------------------------------
   SYST_REFCLK update function
  *----------------------------------------------------------------------------*/
-uint32_t SystRefclkUpdate()
+uint32_t pm_soc_clk_get_refclk()
 {
     if (CGU->PLL_CLK_SEL & 1) {
 #if defined(ENSEMBLE_SOC_E1C)
@@ -94,11 +97,11 @@ uint32_t SystRefclkUpdate()
 #if defined(ENSEMBLE_SOC_E1C) || defined(ENSEMBLE_SOC_GEN2)
             SystemREFClock = 76800000;
 #else
-            SystemREFClock = SocTopClockHFXO();
+            SystemREFClock = pm_soc_clk_get_hfxo();
 #endif
         }
         else {
-            SystemREFClock = SocTopClockHFRC();
+            SystemREFClock = pm_soc_clk_get_hfrc();
         }
     }
 
@@ -126,22 +129,79 @@ static uint32_t SystSyspllUpdate()
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
             return 76800000;
 #else
-            return SocTopClockHFXO();
+            return pm_soc_clk_get_hfxo();
 #endif
         }
         else {
-            return SocTopClockHFRC();
+            return pm_soc_clk_get_hfrc();
         }
     }
 }
 
 /*----------------------------------------------------------------------------
-  SYST_ACLK / SYST_HCLK / SYST_PCLK bus clock update function
+  SYST_ACLK update function
  *----------------------------------------------------------------------------*/
-uint32_t SystBusClkUpdate()
+uint32_t pm_soc_clk_get_axiclk()
 {
     uint32_t aclk_status = (HOSTBASE->ACLK_CTRL >> 8) & 0xFF;
-    uint32_t syst_clkdiv = AON->SYSTOP_CLK_DIV & 0x303;
+
+    if (aclk_status == 1) {
+        SystemAXIClock = pm_soc_clk_get_refclk();
+    }
+    else if (aclk_status == 2) {
+        SystemAXIClock = SystSyspllUpdate() / ((HOSTBASE->ACLK_DIV0 >> 16) + 1);
+    }
+
+    return SystemAXIClock;
+}
+
+/*----------------------------------------------------------------------------
+  SYST_HCLK update function
+ *----------------------------------------------------------------------------*/
+uint32_t pm_soc_clk_get_ahbclk()
+{
+    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
+    uint8_t hclk_div = (syst_clkdiv >> 8) & 3;
+    hclk_div = hclk_div > 2 ? 2 : hclk_div;
+
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    uint32_t syspll_clk = SystSyspllUpdate();
+    SystemAHBClock = syspll_clk >> hclk_div;
+#else
+    uint32_t systaxi_clk = pm_soc_clk_get_axiclk();
+    SystemAHBClock = SystemAXIClock >> hclk_div;
+#endif
+
+    return SystemAHBClock;
+}
+
+/*----------------------------------------------------------------------------
+  SYST_PCLK update function
+ *----------------------------------------------------------------------------*/
+uint32_t pm_soc_clk_get_apbclk()
+{
+    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
+    uint8_t pclk_div = syst_clkdiv & 3;
+    pclk_div = pclk_div > 2 ? 2 : pclk_div;
+
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    uint32_t syspll_clk = SystSyspllUpdate();
+    SystemAPBClock = syspll_clk >> pclk_div;
+#else
+    uint32_t systaxi_clk = pm_soc_clk_get_axiclk();
+    SystemAPBClock = SystemAXIClock >> pclk_div;
+#endif
+
+    return SystemAPBClock;
+}
+
+/*----------------------------------------------------------------------------
+  SYST_ACLK / SYST_HCLK / SYST_PCLK combined update function
+ *----------------------------------------------------------------------------*/
+uint32_t pm_soc_clk_get_busclk()
+{
+    uint32_t aclk_status = (HOSTBASE->ACLK_CTRL >> 8) & 0xFF;
+    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
     uint8_t hclk_div = (syst_clkdiv >> 8) & 3;
     uint8_t pclk_div = syst_clkdiv & 3;
 
@@ -149,7 +209,7 @@ uint32_t SystBusClkUpdate()
     pclk_div = pclk_div > 2 ? 2 : pclk_div;
 
     if (aclk_status == 1) {
-        SystemAXIClock = SystRefclkUpdate();
+        SystemAXIClock = pm_soc_clk_get_refclk();
     }
     else if (aclk_status == 2) {
         SystemAXIClock = SystSyspllUpdate() / ((HOSTBASE->ACLK_DIV0 >> 16) + 1);
@@ -168,9 +228,145 @@ uint32_t SystBusClkUpdate()
 }
 
 /*----------------------------------------------------------------------------
+  Top level clock divider config function, refer to "OSC_76M_DIV_CTRL" Registers in HWRM
+ *----------------------------------------------------------------------------*/
+int32_t pm_soc_clk_set_hfrc_div(uint32_t div_active, uint32_t div_standby, uint32_t div_xtal)
+{
+    /* Configured divider value should be 0 to 7 */
+    if ((div_active > 7) || (div_standby > 7)) return -1;
+
+    /* VBAT_ANA_REG2 Register (0x1A60A03C)
+     *
+     * OSC_76M_DIV_CTRL_ACTIVE[13:11]
+     *      in SoC "active" mode, HFRC is divided by 2^x, where x = 0 to 7
+     *
+     * OSC_76M_DIV_CTRL_STBY[21:19]
+     *      in SoC "standby" mode, HFRC is divided
+     *          by 2^x, where x = 0 to 2    (divide by 1 to 4)
+     *          by 2^(x+1), where x = 3     (divide by 16)
+     *          by 2^(x+2), where x = 4 to 6(divide by 64 to 256)
+     *          by 2^(x+3), where x = 7     (divide by 1024)
+     * 
+     * Note: SoC "standby" mode is only when all PDs > 2 are off
+     */
+
+    uint32_t reg_data = VBATSEC->VBAT_ANA_REG2;
+    reg_data &= ~((7U << 11) | (7U << 19));
+    reg_data |= (div_active << 11) | (div_standby << 19);
+    VBATSEC->VBAT_ANA_REG2 = reg_data;
+
+    return 0;
+}
+
+int32_t pm_soc_clk_set_hfxo_div(uint32_t div_xtal)
+{
+    /* Configured divider value should be 0 to 7 */
+    if (div_xtal > 7) return -1;
+
+    reg_data = *((volatile uint32_t *)0x1A604030);
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    /* MISC_REG1 Register (0x1A604030)
+     *
+     * cont_clkDiv[19:17]
+     *      HF XTAL is divided by 2^x, where x = 0 to 7
+     * sel_clkDivHi[20]
+     *      simply should be set to 0
+     */
+    reg_data &= ~(15 << 17);
+    reg_data |= (div_xtal << 17);
+#else
+    /* MISC_REG1 Register (0x1A604030)
+     *
+     * cont_clkDiv[15:13]
+     *      HF XTAL is divided by 2^x, where x = 0 to 7
+     * sel_clkDivHi[16]
+     *      simply should be set to 0
+     */
+    reg_data &= ~(15 << 13);
+    reg_data |= (div_xtal << 13);
+#endif
+    *((volatile uint32_t *)0x1A604030) = reg_data;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------------
+  Oscillator clock select function, refer to "OSC_CTRL Register" in HWRM
+ *----------------------------------------------------------------------------*/
+void pm_soc_clk_set_osc_sel(uint32_t xtal_sel)
+{
+    /* OSC Control Register (0x00)
+     *
+     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 38.4M HFXO (bolt)
+     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 76.8M HFXOx2 (eagle/spark)
+     *      used by SYST_REFCLK, SYSPLL_CLK, CPUPLL_CLK
+     *
+     * periph_xtal_sel[4] 0: 38.4M HFRC, 1: 38.4M HFXO
+     *      used by peripherals as HFOSC_CLK
+     */
+    uint32_t reg_data = CGU->OSC_CTRL;
+    reg_data &= ~(0x11);
+    reg_data |=  (0x11 & xtal_sel);
+    CGU->OSC_CTRL = reg_data;
+}
+
+/*----------------------------------------------------------------------------
+  PLL clock select function, refer to "PLL_CLK_SEL Register" in HWRM
+ *----------------------------------------------------------------------------*/
+void pm_soc_clk_set_pll_sel(uint32_t pll_sel)
+{
+    /* Switch from non-PLL to PLL clock
+     *  osc_mix_clk is result of sys_xtal_sel bit
+     *  osc_9p6M_clk is result of periph_xtal_sel bit
+     *  ESx HFRC/HFXO clk is result of ESCLK_SEL bits
+     *
+     *  SYST_REFCLK[0]  - osc_mix_clk  or PLL-100M
+     *  SYST_ACLK[4]    - osc_mix_clk  or PLL-400M
+     *  RESERVED[8]     - unused field
+     *  ES0[16]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
+     *  ES1[20]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
+     */
+    uint32_t reg_data = CGU->PLL_CLK_SEL;
+    reg_data &= ~(0x110111);
+    reg_data |=  (0x110011 & pll_sel);
+    CGU->PLL_CLK_SEL = reg_data;
+}
+
+/*----------------------------------------------------------------------------
+  Bus clock select function, refer to "CLKCTL_SYS Registers" and "SYSTOP_CLK_DIV Register" in HWRM
+ *----------------------------------------------------------------------------*/
+int32_t pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hclk_div, uint32_t pclk_div)
+{
+    /* ACLK select should be 1 (SYST_REFCLK) or 2 (SYSPLL_CLK)
+     * Note: ACLK divider is n + 1, where n is up to 31
+     * Note: divider is only valid on 2 (SYSPLL_CLK)
+     */
+    if ((aclk_ctrl != 1) && (aclk_ctrl != 2)) return -1;
+    if ((aclk_ctrl == 1) && (aclk_div != 0)) return -1;
+
+    /* ACLK is further divided to create HCLK and PCLK
+     * HCLK and PCLK divider should be 0 to 2
+     * Note: divider is 2^n
+     */
+    if ((hclk_div > 2) || (pclk_div > 2)) return - 1;
+
+    /* Refer to "ACLK_CTRL" and "ACLK_DIV0" Registers in the HWRM */
+    *((volatile uint32_t *)0x1A010820) = aclk_ctrl;
+    *((volatile uint32_t *)0x1A010824) = aclk_div;
+
+    /* Refer to "SYSTOP_CLK_DIV Register" in the HWRM */
+    uint32_t reg_data = AONALL->SYSTOP_CLK_DIV;
+    reg_data &= ~(0x303);
+    reg_data |=  (0x303 & (hclk_div << 8 | pclk_div));
+    AONALL->SYSTOP_CLK_DIV = reg_data;
+
+    return 0;
+}
+
+/*----------------------------------------------------------------------------
   Core clock update function for RTSS-M55 subsystems
  *----------------------------------------------------------------------------*/
-uint32_t CoreClockUpdate()
+uint32_t pm_core_clk_update()
 {
     uint32_t coreID = CoreID();
     uint32_t PLL_CLK_SEL = CGU->PLL_CLK_SEL;
@@ -231,11 +427,10 @@ uint32_t CoreClockUpdate()
 /*----------------------------------------------------------------------------
   Core clock config function
  *----------------------------------------------------------------------------*/
-int32_t CoreClockConfig(uint32_t esclk_osc_sel, uint32_t esclk_pll_sel)
+int32_t pm_core_clk_set(uint32_t osc_sel, uint32_t pll_sel)
 {
-    /* Configured divider values should be 0 to 3
-     */
-    if ((esclk_osc_sel > 3) || (esclk_pll_sel > 3)) return -1;
+    /* mux select values should be 0 to 3 */
+    if ((osc_sel > 3) || (pll_sel > 3)) return -1;
 
     /* get the number of bits to shift in the register depending on CoreID */
     uint32_t shift_val = CoreID() ? 4 : 0;
@@ -245,140 +440,14 @@ int32_t CoreClockConfig(uint32_t esclk_osc_sel, uint32_t esclk_pll_sel)
 
     /* RTSS clock will be pll_rtss_he/hp_clocks[esclk_sel] */
     reg_data &= ~(3U << shift_val);
-    reg_data |= (esclk_pll_sel << shift_val);
+    reg_data |= (pll_sel << shift_val);
 
     /* RTSS clock will be osc_rtss_clocks[esclk_sel] */
     shift_val += 8;
     reg_data &= ~(3U << shift_val);
-    reg_data |= (esclk_osc_sel << shift_val);
+    reg_data |= (osc_sel << shift_val);
 
     CGU->ESCLK_SEL = reg_data;
-
-    return 0;
-}
-
-/*----------------------------------------------------------------------------
-  Top level clock divider config function, refer to "OSC_76M_DIV_CTRL" Registers in HWRM
- *----------------------------------------------------------------------------*/
-int32_t DivClockConfig(uint32_t div_active, uint32_t div_standby, uint32_t div_xtal)
-{
-    /* Configured divider values should be 0 to 7
-     */
-    if ((div_active > 7) || (div_standby > 7) || (div_xtal > 7)) return -1;
-
-    /* VBAT_ANA_REG2 Register (0x1A60A03C)
-     *
-     * OSC_76M_DIV_CTRL_ACTIVE[13:11]
-     *      in "active" mode, HFRC is divided by 2^x, where x = 0 to 7
-     *
-     * OSC_76M_DIV_CTRL_STBY[21:19]
-     *      in "standby" mode, HFRC is divided
-     *          by 2^x, where x = 0 to 2    (divide by 1 to 4)
-     *          by 2^(x+1), where x = 3     (divide by 16)
-     *          by 2^(x+2), where x = 4 to 6(divide by 64 to 256)
-     *          by 2^(x+3), where x = 7     (divide by 1024)
-     */
-
-    uint32_t reg_data = ANA->VBAT_ANA_REG2;
-    reg_data &= ~((7U << 11) | (7U << 19));
-    reg_data |= (div_active << 11) | (div_standby << 19);
-    ANA->VBAT_ANA_REG2 = reg_data;
-
-    reg_data = *((volatile uint32_t *)0x1A604030);
-#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
-    /* MISC_REG1 Register (0x1A604030)
-     *
-     * cont_clkDiv[19:17]
-     *      HF XTAL is divided by 2^x, where x = 0 to 7
-     * sel_clkDivHi[20]
-     *      simply should be set to 0
-     */
-    reg_data &= ~(15 << 17);
-    reg_data |= (div_xtal << 17);
-#else
-    /* MISC_REG1 Register (0x1A604030)
-     *
-     * cont_clkDiv[15:13]
-     *      HF XTAL is divided by 2^x, where x = 0 to 7
-     * sel_clkDivHi[16]
-     *      simply should be set to 0
-     */
-    reg_data &= ~(15 << 13);
-    reg_data |= (div_xtal << 13);
-#endif
-    *((volatile uint32_t *)0x1A604030) = reg_data;
-
-    return 0;
-}
-
-/*----------------------------------------------------------------------------
-  Oscillator clock select function, refer to "OSC_CTRL Register" in HWRM
- *----------------------------------------------------------------------------*/
-void OscClockConfig(uint32_t xtal_sel)
-{
-    /* OSC Control Register (0x00)
-     *
-     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 38.4M HFXO (bolt)
-     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 76.8M HFXOx2 (eagle/spark)
-     *      used by SYST_REFCLK, SYSPLL_CLK, CPUPLL_CLK
-     *
-     * periph_xtal_sel[4] 0: 38.4M HFRC, 1: 38.4M HFXO
-     *      used by peripherals as HFOSC_CLK
-     */
-    uint32_t reg_data = CGU->OSC_CTRL;
-    reg_data &= ~(0x11);
-    reg_data |=  (0x11 & xtal_sel);
-    CGU->OSC_CTRL = reg_data;
-}
-
-/*----------------------------------------------------------------------------
-  PLL clock select function, refer to "PLL_CLK_SEL Register" in HWRM
- *----------------------------------------------------------------------------*/
-void PllClockConfig(uint32_t pll_sel)
-{
-    /* Switch from non-PLL to PLL clock
-     *  osc_mix_clk is result of sys_xtal_sel bit
-     *  osc_9p6M_clk is result of periph_xtal_sel bit
-     *  ESx HFRC/HFXO clk is result of ESCLK_SEL bits
-     *
-     *  SYST_REFCLK[0]  - osc_mix_clk  or PLL-100M
-     *  SYST_ACLK[4]    - osc_mix_clk  or PLL-400M
-     *  ES0[16]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
-     *  ES1[20]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
-     */
-    uint32_t reg_data = CGU->PLL_CLK_SEL;
-    reg_data &= ~(0x110111);
-    reg_data |=  (0x110011 & pll_sel);
-    CGU->PLL_CLK_SEL = reg_data;
-}
-
-/*----------------------------------------------------------------------------
-  Bus clock select function, refer to "CLKCTL_SYS Registers" and "SYSTOP_CLK_DIV Register" in HWRM
- *----------------------------------------------------------------------------*/
-int32_t BusClockConfig(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hclk_div, uint32_t pclk_div)
-{
-    /* ACLK select should be 1 (SYST_REFCLK) or 2 (SYSPLL_CLK)
-     * Note: ACLK divider is n + 1, where n is up to 31
-     * Note: divider is only valid on 2 (SYSPLL_CLK)
-     */
-    if ((aclk_ctrl != 1) && (aclk_ctrl != 2)) return -1;
-    if ((aclk_ctrl == 1) && (aclk_div != 0)) return -1;
-
-    /* ACLK is further divided to create HCLK and PCLK
-     * HCLK and PCLK divider should be 0 to 2
-     * Note: divider is 2^n
-     */
-    if ((hclk_div > 2) || (pclk_div > 2)) return - 1;
-
-    /* Refer to "ACLK_CTRL" and "ACLK_DIV0" Registers in the HWRM */
-    *((volatile uint32_t *)0x1A010820) = aclk_ctrl;
-    *((volatile uint32_t *)0x1A010824) = aclk_div;
-
-    /* Refer to "SYSTOP_CLK_DIV Register" in the HWRM */
-    uint32_t reg_data = AON->SYSTOP_CLK_DIV;
-    reg_data &= ~(0x303);
-    reg_data |=  (0x303 & (hclk_div << 8 | pclk_div));
-    AON->SYSTOP_CLK_DIV = reg_data;
 
     return 0;
 }

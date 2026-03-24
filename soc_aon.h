@@ -36,6 +36,14 @@ typedef struct
     volatile uint32_t AUDIO_PLL_REG1;   /* 0x30 */
     volatile uint32_t AUDIO_PLL_REG2;   /* 0x34 */
     volatile uint32_t AUDIO_PLL_REG3;   /* 0x38 */
+#else
+    volatile const uint32_t RESERVED3[4];
+    volatile uint32_t PD4_CLK_SEL;      /* 0x40 */
+    volatile const uint32_t RESERVED4;
+    volatile uint32_t PD4_PWR_CTRL;     /* 0x48 */
+    volatile uint32_t PD4_CLK_PLL;      /* 0x4C */
+    volatile const uint32_t RESERVED5[2];
+    volatile uint32_t PD4_PWR_STAT;     /* 0x58 */
 #endif
 } AONSEC_Type;
 

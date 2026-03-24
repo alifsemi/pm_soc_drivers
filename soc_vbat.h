@@ -3,6 +3,7 @@
 /* PD0 VBAT Register Base Addresses */
 #define VBATALL_BASE    0x1A609000
 #define VBATSEC_BASE    0x1A60A000
+#define VBATPD4_BASE    0x1A60B000
 #define VBATSEC2_BASE   0x1A60C000
 
 typedef struct
@@ -40,6 +41,13 @@ typedef struct
 
 typedef struct
 {
+    volatile uint32_t RET_CTRL;         /* 0x00 */
+    volatile const uint32_t RESERVED1;
+    volatile uint32_t PWR_CTRL;         /* 0x08 */
+} VBATPD4_Type;
+
+typedef struct
+{
     volatile uint32_t GPIO_POR_CTRL;    /* 0x00 */
     volatile uint32_t SEL_AUDIO_PLL;    /* 0x04 */
     volatile uint32_t ANA_REG_SEL;      /* 0x08 */
@@ -51,4 +59,5 @@ typedef struct
 
 #define VBATALL ((VBATALL_Type *) VBATALL_BASE)
 #define VBATSEC ((VBATSEC_Type *) VBATSEC_BASE)
+#define VBATPD4 ((VBATPD4_Type *) VBATPD4_BASE)
 #define VBATSEC2 ((VBATSEC2_Type *) VBATSEC2_BASE)

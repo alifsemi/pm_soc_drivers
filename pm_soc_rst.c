@@ -1,9 +1,7 @@
-#include "soc.h"
-#include "app_mem_regions.h"
-
-#include "aon.h"
-#include "hostbase.h"
-#include "soc_rst.h"
+#include "soc_aon.h"
+#include "soc_vbat.h"
+#include "soc_hostbase.h"
+#include "pm_soc_rst.h"
 
 void pm_soc_reset_rtss_hp(uint32_t vtor_address)
 {
