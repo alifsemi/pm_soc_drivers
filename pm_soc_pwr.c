@@ -48,14 +48,14 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 
 #if defined(ENSEMBLE_SOC_GEN2)
     /* SRAM0 clock enable is bit 27 */
-    if (sram_select & SYST_SRAM0) {
+    if (sram_select & SYST_SRAM0_EN) {
         reg_data |= (1UL << 27);
     } else {
         reg_data &= ~(1UL << 27);
     }
 #else
     /* SRAM0 clock enable is bit 24 */
-    if (sram_select & SYST_SRAM0) {
+    if (sram_select & SYST_SRAM0_EN) {
         reg_data |= (1UL << 24);
     } else {
         reg_data &= ~(1UL << 24);
@@ -63,7 +63,7 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 #endif
 
     /* SRAM1 clock enable is bit 28 */
-    if (sram_select & SYST_SRAM1) {
+    if (sram_select & SYST_SRAM1_EN) {
         reg_data |= (1UL << 28);
     } else {
         reg_data &= ~(1UL << 28);
@@ -75,14 +75,14 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
     reg_data = *reg_ptr;
 
     /* SRAM0 power mask is bit 8 */
-    if (sram_select & SYST_SRAM0) {
+    if (sram_select & SYST_SRAM0_EN) {
         reg_data &= ~(3UL << 8);
     } else {
         reg_data |= (3UL << 8);
     }
 
     /* SRAM1 power mask is bit 12 */
-    if (sram_select & SYST_SRAM1) {
+    if (sram_select & SYST_SRAM1_EN) {
         reg_data &= ~(3UL << 12);
     } else {
         reg_data |= (3UL << 12);

@@ -230,7 +230,7 @@ uint32_t pm_soc_clk_get_busclk()
 /*----------------------------------------------------------------------------
   Top level clock divider config function, refer to "OSC_76M_DIV_CTRL" Registers in HWRM
  *----------------------------------------------------------------------------*/
-int32_t pm_soc_clk_set_hfrc_div(uint32_t div_active, uint32_t div_standby, uint32_t div_xtal)
+int32_t pm_soc_clk_set_hfrc_div(uint32_t div_active, uint32_t div_standby)
 {
     /* Configured divider value should be 0 to 7 */
     if ((div_active > 7) || (div_standby > 7)) return -1;
@@ -263,7 +263,7 @@ int32_t pm_soc_clk_set_hfxo_div(uint32_t div_xtal)
     /* Configured divider value should be 0 to 7 */
     if (div_xtal > 7) return -1;
 
-    reg_data = *((volatile uint32_t *)0x1A604030);
+    uint32_t reg_data = AONALL->MISC_REG1;
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
     /* MISC_REG1 Register (0x1A604030)
      *
@@ -285,7 +285,7 @@ int32_t pm_soc_clk_set_hfxo_div(uint32_t div_xtal)
     reg_data &= ~(15 << 13);
     reg_data |= (div_xtal << 13);
 #endif
-    *((volatile uint32_t *)0x1A604030) = reg_data;
+    AONALL->MISC_REG1 = reg_data;
 
     return 0;
 }
@@ -351,8 +351,8 @@ int32_t pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hc
     if ((hclk_div > 2) || (pclk_div > 2)) return - 1;
 
     /* Refer to "ACLK_CTRL" and "ACLK_DIV0" Registers in the HWRM */
-    *((volatile uint32_t *)0x1A010820) = aclk_ctrl;
-    *((volatile uint32_t *)0x1A010824) = aclk_div;
+    HOSTBASE->ACLK_CTRL = aclk_ctrl;
+    HOSTBASE->ACLK_DIV0 = aclk_div;
 
     /* Refer to "SYSTOP_CLK_DIV Register" in the HWRM */
     uint32_t reg_data = AONALL->SYSTOP_CLK_DIV;

@@ -18,8 +18,8 @@
 #define WE_LPGPIO6  (1 << 22)    // bit22
 #define WE_LPGPIO7  (1 << 23)    // bit23
 
-#define WE_LPTIMER  0XF00     // bit11:8
-#define WE_LPGPIO   0XFF0000  // bit23:16
+#define WE_LPTIMER  0xF00     // bit11:8
+#define WE_LPGPIO   0xFF0000  // bit23:16
 
 /* TBD - there is no way to do this via RTSS */
 void pm_soc_reset_soc();

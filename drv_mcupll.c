@@ -3,16 +3,6 @@
 #include "drv_counter.h"
 #include "drv_mcupll.h"
 
-#define SE_CGU_OSC_CTRL     0x1A602000
-#define SE_CGU_PLL_LOCK     0x1A602004
-#define SE_CGU_PLL_SEL      0x1A602008
-#define SE_CGU_ESCLK_SEL    0x1A602010
-#define SE_ANATOP_REG1      0x1A604034
-#define SE_XO_REG1          0x1A605020
-#define SE_MCU_CLKPLL_REG1  0x1A605024
-#define SE_MCU_CLKPLL_REG2  0x1A605028
-#define SE_MCU_CLKPLL_REG3  0x1A60502C
-
 static void OSC_xtal_start(bool faststart, bool boost)
 {
     /* Enable bandgap */
@@ -93,8 +83,8 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     }
 
     /* reset clock outputs */
-    *(volatile uint32_t *)0x1A602014 |= (1U << 18);
-    *(volatile uint32_t *)0x1A602014 &= ~(1U << 18);
+    CGU->CLK_ENA |= (1U << 18);
+    CGU->CLK_ENA &= ~(1U << 18);
 }
 
 static void PLL_clkpll_start_e1c(bool faststart)
