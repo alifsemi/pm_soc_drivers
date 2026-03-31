@@ -6,7 +6,7 @@
 void pm_soc_reset_rtss_hp(uint32_t vtor_address)
 {
 #if !defined(ENSEMBLE_SOC_E1C)
-    AONALL->RTSS_HP_RESET = 0;
+    AONALL->RTSS_HP_CTRL = 0;
     AONSEC->CM55_HP_SE_VTOR = vtor_address;
 
     /* apply reset & M55 CPUWAIT */
@@ -23,7 +23,7 @@ void pm_soc_reset_rtss_hp(uint32_t vtor_address)
 
 void pm_soc_reset_rtss_he(uint32_t vtor_address)
 {
-    AONALL->RTSS_HE_RESET = 0;
+    AONALL->RTSS_HE_CTRL = 0;
     VBATSEC->CM55_HE_SE_VTOR = vtor_address;
 
     /* apply reset & M55 CPUWAIT */
