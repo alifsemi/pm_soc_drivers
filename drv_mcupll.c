@@ -5,6 +5,8 @@
 
 static void OSC_xtal_start(bool faststart, bool boost)
 {
+    if ((AONSEC->XO_REG1 & 1) == 1) return;
+
     /* Enable bandgap */
     AONALL->ANATOP_REG1 = 0x11;
 
@@ -208,6 +210,11 @@ void PLL_clkpll_stop()
     AONSEC->MCUPLL_REG3 = 0;
 }
 
+bool OSC_enabled()
+{
+    return ((AONSEC->XO_REG1 & 1) == 1);
+}
+
 void OSC_initialize()
 {
     OSC_xtal_start(true, true);
@@ -216,6 +223,11 @@ void OSC_initialize()
 void OSC_uninitialize()
 {
     OSC_xtal_stop();
+}
+
+bool PLL_enabled()
+{
+    return ((CGU->PLL_LOCK_CTRL & 1) == 1);
 }
 
 void PLL_initialize(uint32_t xtal_freq)
