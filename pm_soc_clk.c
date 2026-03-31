@@ -138,6 +138,29 @@ static uint32_t SystSyspllUpdate()
     }
 }
 
+static uint32_t SystCpupllUpdate()
+{
+#if defined(ENSEMBLE_SOC_E1C)
+    return 0;
+#else
+    if (CGU->PLL_CLK_SEL & (1 << 4)) {
+        return 800000000;
+    }
+    else {
+        if (CGU->OSC_CTRL & 1) {
+#if defined(ENSEMBLE_SOC_GEN2)
+            return 76800000;
+#else
+            return pm_soc_clk_get_hfxo();
+#endif
+        }
+        else {
+            return pm_soc_clk_get_hfrc();
+        }
+    }
+#endif
+}
+
 /*----------------------------------------------------------------------------
   SYST_ACLK update function
  *----------------------------------------------------------------------------*/
@@ -363,8 +386,9 @@ int32_t pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hc
     return 0;
 }
 
+#if (defined(M55_HE) || defined(M55_HP))
 /*----------------------------------------------------------------------------
-  Core clock update function for RTSS-M55 subsystems
+  Core clock update function for RTSS (Cortex-M55 subsystems)
  *----------------------------------------------------------------------------*/
 uint32_t pm_core_clk_update()
 {
@@ -425,7 +449,7 @@ uint32_t pm_core_clk_update()
 }
 
 /*----------------------------------------------------------------------------
-  Core clock config function
+  Core clock config function for RTSS (Cortex-M55 subsystems)
  *----------------------------------------------------------------------------*/
 int32_t pm_core_clk_set(uint32_t osc_sel, uint32_t pll_sel)
 {
@@ -451,3 +475,49 @@ int32_t pm_core_clk_set(uint32_t osc_sel, uint32_t pll_sel)
 
     return 0;
 }
+#else
+/*----------------------------------------------------------------------------
+  Core clock update function for APSS (Cortex-A subsystem)
+ *----------------------------------------------------------------------------*/
+uint32_t pm_core_clk_update()
+{
+    uint32_t apss_clk_status = (HOSTBASE->HOSTCPUCLK_CTRL >> 8) & 0xFF;
+    if (apss_clk_status == 0)
+    {
+        SystemCoreClock = 0;
+    }
+    else if (apss_clk_status == 1) {
+        SystemCoreClock = pm_soc_clk_get_refclk();
+    }
+    else if (apss_clk_status == 2) {
+        SystemCoreClock = SystSyspllUpdate() / ((HOSTBASE->HOSTCPUCLK_DIV1 >> 16) + 1);
+    }
+    else if (apss_clk_status == 4) {
+        SystemCoreClock = SystCpupllUpdate() / ((HOSTBASE->HOSTCPUCLK_DIV0 >> 16) + 1);
+    }
+
+    return SystemCoreClock;
+}
+
+/*----------------------------------------------------------------------------
+  Core clock config function for APSS (Cortex-A subsystem)
+ *----------------------------------------------------------------------------*/
+int32_t pm_core_clk_set(uint32_t clk_src, uint32_t clk_div)
+{
+    if ((clk_src != 1) && (clk_src != 2) && (clk_src != 4)) return -1;
+    if ((clk_src == 1) && (clk_div != 0)) return -1;
+    if ((clk_src == 2) && (clk_div > 31)) return -1;
+    if ((clk_src == 4) && (clk_div > 31)) return -1;
+
+    /* pre-set the divider before setting the clock source */
+    if (clk_src == 2) {
+        HOSTBASE->HOSTCPUCLK_DIV1 = clk_div;
+    }
+    else if (clk_src == 4) {
+        HOSTBASE->HOSTCPUCLK_DIV0 = clk_div;
+    }
+    HOSTBASE->HOSTCPUCLK_CTRL = clk_src;
+
+    return 0;
+}
+#endif

@@ -15,8 +15,12 @@ void     pm_soc_clk_set_osc_sel(uint32_t xtal_sel);
 void     pm_soc_clk_set_pll_sel(uint32_t pll_sel);
 int32_t  pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hclk_div, uint32_t pclk_div);
 
+#if (defined(M55_HE) || defined(M55_HP))
 /* for Cortex-M cores in RTSS */
 uint32_t pm_core_clk_update();      /* returns RTSS_HE_CLOCK or RTSS_HP_CLOCK */
 int32_t  pm_core_clk_set(uint32_t osc_sel, uint32_t pll_sel);
-
+#else
 /* for Cortex-A cores in APSS (TBD) */
+uint32_t pm_core_clk_update();      /* returns APSS_CPU_CLOCK */
+int32_t  pm_core_clk_set(uint32_t clk_src, uint32_t clk_div);
+#endif
