@@ -41,10 +41,8 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 #if defined(ENSEMBLE_SOC_E1C)
     return; /* not applicable for this family */
 #else
-    volatile uint32_t *reg_ptr, reg_data;
-
-    reg_ptr = CGU->CLK_ENA;
-    reg_data = *reg_ptr;
+    uint32_t reg_data;
+    reg_data = CGU->CLK_ENA;
 
 #if defined(ENSEMBLE_SOC_GEN2)
     /* SRAM0 clock enable is bit 27 */
@@ -69,10 +67,9 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
         reg_data &= ~(1UL << 28);
     }
 
-    *reg_ptr = reg_data;
+    CGU->CLK_ENA = reg_data;
 
-    reg_ptr = VBATSEC->PWR_CTRL;
-    reg_data = *reg_ptr;
+    reg_data = VBATSEC->PWR_CTRL;
 
     /* SRAM0 power mask is bit 8 */
     if (sram_select & SYST_SRAM0_EN) {
@@ -88,7 +85,7 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
         reg_data |= (3UL << 12);
     }
 
-    *reg_ptr = reg_data;
+    VBATSEC->PWR_CTRL = reg_data;
 
     /* TBD - replace with "BISR Done" Status */
     if (sram_select) {
@@ -102,14 +99,13 @@ void pm_soc_retain_syst_sram(uint32_t retention_select)
 #if !defined(ENSEMBLE_SOC_GEN2)
     return; /* only applicable for Ensemble E4/E6/E8 */
 #else
-    volatile uint32_t *reg_ptr, reg_data;
-    reg_ptr = VBATALL->RET_CTRL;
-    reg_data = *reg_ptr;
+    uint32_t reg_data;
+    reg_data = VBATALL->RET_CTRL;
 
     /* do not touch bits 0-7 */
     reg_data |= 0x3FF00; /* set all retention bits to 1 (no retention) */
     reg_data &= ~(retention_select); /* clear bits for SRAM blocks that should be retained */
-    *reg_ptr = reg_data;
+    VBATALL->RET_CTRL = reg_data;
 #endif
 }
 
