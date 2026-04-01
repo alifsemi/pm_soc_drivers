@@ -58,6 +58,8 @@ void CGU_clock_enable_isp(bool enable);
 void CGU_clock_enable_jpeg(bool enable);
 void CGU_clock_enable_ethos_u85(bool enable);
 
+void CGU_clock_select_ospi_clk(uint32_t clk_sel);
+
 #elif defined(ENSEMBLE_SOC_E1C)
 
 /* CGU CLK_ENA bit masks for ENSEMBLE_SOC_E1C */

@@ -1,5 +1,7 @@
 #include "drv_cgu.h"
-#include "soc.h" /* for CGU */
+
+/* definition for CGU_Type */
+#include "soc.h"
 
 static inline void cgu_set_clk(uint32_t mask)
 {
@@ -21,8 +23,6 @@ void CGU_clock_enable_clk100M(bool enable)  { if (enable) cgu_set_clk(CGU_CLK_EN
 void CGU_clock_enable_clk10M(bool enable)   { if (enable) cgu_set_clk(CGU_CLK_ENA_CLK10M); else cgu_clear_clk(CGU_CLK_ENA_CLK10M); }
 void CGU_clock_enable_clk80M(bool enable)   { if (enable) cgu_set_clk(CGU_CLK_ENA_CLK80M); else cgu_clear_clk(CGU_CLK_ENA_CLK80M); }
 void CGU_clock_enable_mram(bool enable)     { if (enable) cgu_set_clk(CGU_CLK_ENA_MRAM); else cgu_clear_clk(CGU_CLK_ENA_MRAM); }
-void CGU_clock_enable_rtsshp(bool enable)    { if (enable) cgu_set_clk(CGU_CLK_ENA_RTSSHP); else cgu_clear_clk(CGU_CLK_ENA_RTSSHP); }
-void CGU_clock_enable_rtsshe(bool enable)    { if (enable) cgu_set_clk(CGU_CLK_ENA_RTSSHE); else cgu_clear_clk(CGU_CLK_ENA_RTSSHE); }
 void CGU_clock_enable_clk200M(bool enable)  { if (enable) cgu_set_clk(CGU_CLK_ENA_CLK200M); else cgu_clear_clk(CGU_CLK_ENA_CLK200M); }
 void CGU_clock_enable_clk400M(bool enable)  { if (enable) cgu_set_clk(CGU_CLK_ENA_CLK400M); else cgu_clear_clk(CGU_CLK_ENA_CLK400M); }
 void CGU_clock_enable_trace(bool enable)    { if (enable) cgu_set_clk(CGU_CLK_ENA_TRACE); else cgu_clear_clk(CGU_CLK_ENA_TRACE); }
@@ -39,6 +39,12 @@ void CGU_clock_enable_sram1(bool enable)    { if (enable) cgu_set_clk(CGU_CLK_EN
 void CGU_clock_enable_isp(bool enable)      { if (enable) cgu_set_clk(CGU_CLK_ENA_ISP); else cgu_clear_clk(CGU_CLK_ENA_ISP); }
 void CGU_clock_enable_jpeg(bool enable)     { if (enable) cgu_set_clk(CGU_CLK_ENA_JPEG); else cgu_clear_clk(CGU_CLK_ENA_JPEG); }
 void CGU_clock_enable_ethos_u85(bool enable) { if (enable) cgu_set_clk(CGU_CLK_ENA_ETHOS_U85); else cgu_clear_clk(CGU_CLK_ENA_ETHOS_U85); }
+
+/* HEXSPI clock select; 0: up to 400MHz (ACLK) / 1: fixed 266MHz (PLL) */
+void CGU_clock_select_ospi_clk(uint32_t clk_sel)
+{
+    CGU->MISC_CLK_CTRL = clk_sel & 1U;
+}
 
 #elif defined(ENSEMBLE_SOC_E1C)
 
