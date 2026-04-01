@@ -1,7 +1,9 @@
 #include "soc_aon.h"
 #include "soc_vbat.h"
-#include "drv_counter.h"
 #include "drv_mcupll.h"
+
+/* for sys_busy_loop_us() function */
+#include "sys_utils.h"
 
 static void OSC_xtal_start(bool faststart, bool boost)
 {
@@ -17,7 +19,7 @@ static void OSC_xtal_start(bool faststart, bool boost)
 
     /* Enable HFXO */
     AONSEC->XO_REG1 = val;
-    delay_us_refclk(600);
+    sys_busy_loop_us(600);
 
     AONSEC->XO_REG1 = xo_reg1_default;
 }
@@ -71,12 +73,12 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
-    delay_us_refclk(15);
+    sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    delay_us_refclk(45);
+    sys_busy_loop_us(45);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -103,12 +105,12 @@ static void PLL_clkpll_start_e1c(bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
-    delay_us_refclk(15);
+    sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    delay_us_refclk(45);
+    sys_busy_loop_us(45);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -164,12 +166,12 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
-    delay_us_refclk(15);
+    sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    delay_us_refclk(45);
+    sys_busy_loop_us(45);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -215,6 +217,7 @@ bool OSC_enabled()
     return ((AONSEC->XO_REG1 & 1) == 1);
 }
 
+/* be sure to update the SystemREFClock variable */
 void OSC_initialize()
 {
     OSC_xtal_start(true, true);
@@ -230,6 +233,7 @@ bool PLL_enabled()
     return ((CGU->PLL_LOCK_CTRL & 1) == 1);
 }
 
+/* be sure to update the SystemREFClock variable */
 void PLL_initialize(uint32_t xtal_freq)
 {
     OSC_xtal_start(true, true);
