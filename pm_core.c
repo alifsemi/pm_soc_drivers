@@ -22,6 +22,7 @@
 /* Includes ------------------------------------------------------------------*/
 
 #include "pm_core.h"
+#include "core_defines.h"
 
 #define VERSION(api, driver) (((api) << 8) | (driver))
 #define PM_DRV_VERSION       VERSION(2, 0) /*!< PM Driver Version */
@@ -337,12 +338,16 @@ void pm_core_enter_deep_sleep(void)
  */
 void pm_core_enter_deep_sleep_request_subsys_off(void)
 {
-    uint32_t orig_ccr, orig_mscr, orig_demcr, orig_cppwr;
+    uint32_t orig_ccr, orig_mscr, orig_demcr, orig_cppwr, orig_clkena;
 #if (defined(__FPU_USED) && (__FPU_USED == 1U)) ||                                                 \
     (defined(__ARM_FEATURE_MVE) && (__ARM_FEATURE_MVE > 0U))
     fp_state_t fp_state;
     bool       fp_saved = false;
 #endif
+
+    /* Power State transition for the RTSS is dependent on NPU clock enabled */
+    orig_clkena = M55LOCAL_CFG->CLK_ENA;
+    M55LOCAL_CFG->CLK_ENA = orig_clkena | 1;
 
     /* We attempt to power off the subsystem by turning off all active
      * indications from the CPU, taking its power domains PDCORE, PDEPU,
@@ -448,6 +453,8 @@ void pm_core_enter_deep_sleep_request_subsys_off(void)
     SCB->CCR         = orig_ccr;
     DCB->DEMCR       = orig_demcr;
     ICB->CPPWR       = orig_cppwr;
+
+    M55LOCAL_CFG->CLK_ENA = orig_clkena;
 
     /* Make sure enables are synchronized */
     __DSB();
