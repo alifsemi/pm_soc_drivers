@@ -36,6 +36,10 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     uint32_t reg2_val = 0xFC4A1FFE;
 
     switch(xtal_freq) {
+    case 48000000:
+        reg1_val |= 0x64 << 20;
+        reg2_val |= 1U << 24;
+        break;
     case 40000000:
         reg1_val |= 0x78 << 20;
         reg2_val |= 1U << 24;
@@ -73,6 +77,7 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
+    AONSEC->MCUPLL_REG3 = 0x28018000;
     sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
@@ -94,8 +99,45 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
 static void PLL_clkpll_start_e1c(bool faststart)
 {
     /* reg1_val = integer | (fractional) */
-    uint32_t reg1_val = 0x19 << 20;
-    uint32_t reg2_val = 0x84967BFE | (1U << 24);
+    uint32_t reg1_val = 0;
+    uint32_t reg2_val = 0x84967BFE;
+
+    switch(xtal_freq) {
+    case 48000000:
+        reg1_val |= 0x14 << 20;
+        reg2_val |= 1U << 24;
+        break;
+    case 40000000:
+        reg1_val |= 0x18 << 20;
+        reg2_val |= 1U << 24;
+        break;
+    case 38400000:
+        reg1_val |= 0x19 << 20;
+        reg2_val |= 1U << 24;
+        break;
+    case 32000000:
+        reg1_val |= 0x1E << 20;
+        reg2_val |= 1U << 24;
+        break;
+    case 30000000:
+        reg1_val |= 0x10 << 20;
+        break;
+    case 25000000:
+        reg1_val |= 0x13 << 20 | 0x33333;
+        break;
+    case 24000000:
+        reg1_val |= 0x14 << 20;
+        break;
+    case 20000000:
+        reg1_val |= 0x18 << 20;
+        break;
+    case 19200000:
+        reg1_val |= 0x19 << 20;
+        break;
+    default:
+        while(1);
+        break;
+    }
 
     /* set fast start bit if needed */
     if (faststart) {
@@ -105,6 +147,7 @@ static void PLL_clkpll_start_e1c(bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
+    AONSEC->MCUPLL_REG3 = 0x08024000;
     sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
@@ -126,6 +169,10 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     uint32_t reg2_val = 0x2C8269FE;
 
     switch(xtal_freq) {
+    case 48000000:
+        reg1_val |= 0x21 << 20 | 0x55555;
+        reg2_val |= 1U << 24;
+        break;
     case 40000000:
         reg1_val |= 0x28 << 20;
         reg2_val |= 1U << 24;
@@ -166,6 +213,7 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     /* apply initial config to PLL, optionally add faststart */
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
+    AONSEC->MCUPLL_REG3 = 0x08038000;
     sys_busy_loop_us(15);
 
     /* release reset to PLL, wait to settle */
@@ -184,7 +232,7 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     CGU->CLK_ENA &= ~(1U << 18);
 }
 
-void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
+static void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
 {
     /* check PLL LOCK bit */
     if ((CGU->PLL_LOCK_CTRL & 1) == 1) return;
@@ -202,7 +250,7 @@ void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
     CGU->PLL_LOCK_CTRL = 1;
 }
 
-void PLL_clkpll_stop()
+static void PLL_clkpll_stop()
 {
     /* clear PLL LOCK bit */
     CGU->PLL_LOCK_CTRL = 0;
