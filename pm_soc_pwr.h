@@ -22,6 +22,7 @@
 /* Adjustments for the internal DCDC converter */
 void pm_soc_set_dcdc_pfm(void);
 void pm_soc_set_dcdc_pwm(void);
+void pm_soc_set_dcdc_default_trim(uint32_t trim_val);
 void pm_soc_set_dcdc_voltage(uint32_t millivolts);
 
 /* Power & Retention Controls for PD6 SRAMs (retention is optional) */

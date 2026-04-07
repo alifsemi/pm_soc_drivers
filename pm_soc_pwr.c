@@ -9,6 +9,8 @@
 /* for CGU_Type */
 #include "soc.h"
 
+static uint32_t dcdc_default_trim = 0;
+
 void pm_soc_set_dcdc_pfm(void) {
 #if defined(ENSEMBLE_SOC_E1C)
     return; /* not applicable for this family */
@@ -25,14 +27,36 @@ void pm_soc_set_dcdc_pwm(void) {
 #endif
 }
 
+/* Alif SoCs typically default to 825mV on the DCDC converter output.
+ * Before calling pm_soc_set_dcdc_voltage(), use pm_soc_set_dcdc_default_trim() to set 
+ * the default trim value which corresponds to 825mV on the DCDC converter.
+ * This is required to ensure that the DCDC converter operates correctly within the specified voltage range.
+ */
+void pm_soc_set_dcdc_default_trim(uint32_t trim_val) {
+    dcdc_default_trim = trim_val;
+}
+
 void pm_soc_set_dcdc_voltage(uint32_t millivolts) {
     if ((millivolts < 700) || (millivolts > 850)) {
         return; /* out of range */
     }
-#if defined(ENSEMBLE_SOC_GEN2)
+    if (dcdc_default_trim == 0) {
+        return; /* default trim value not set */
+    }
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    int32_t trim_val = millivolts;
+    trim_val -= 825;
+    trim_val /= 8;
+    trim_val += dcdc_default_trim;
 
-#elif defined(ENSEMBLE_SOC_E1C)
+    if ((trim_val < 0) || (trim_val > 63)) {
+        return; /* calculated trim value is out of range */
+    }
 
+    uint32_t dcdc_reg1_val = VBATSEC->DCDC_REG1;
+    dcdc_reg1_val &= ~(63U << 3);
+    dcdc_reg1_val |= trim_val << 3;
+    VBATSEC->DCDC_REG1 = dcdc_reg1_val;
 #endif
 }
 
