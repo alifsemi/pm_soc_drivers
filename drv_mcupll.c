@@ -96,7 +96,7 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     CGU->CLK_ENA &= ~(1U << 18);
 }
 
-static void PLL_clkpll_start_e1c(bool faststart)
+static void PLL_clkpll_start_e1c(uint32_t xtal_freq, bool faststart)
 {
     /* reg1_val = integer | (fractional) */
     uint32_t reg1_val = 0;
@@ -241,7 +241,7 @@ static void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
 #if defined(ENSEMBLE_SOC_GEN2)
     PLL_clkpll_start_e4(xtal_freq, faststart);
 #elif defined(ENSEMBLE_SOC_E1C)
-    PLL_clkpll_start_e1c(faststart);
+    PLL_clkpll_start_e1c(xtal_freq, faststart);
 #else
     PLL_clkpll_start_e3(xtal_freq, faststart);
 #endif

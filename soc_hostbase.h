@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 /* PD2 AON Register Base Addresses */
-#define HOSTBASE_BASE   0x1A604000
+#define HOSTBASE_BASE   0x1A010000
 
 typedef struct
 {
