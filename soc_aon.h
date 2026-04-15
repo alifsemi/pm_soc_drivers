@@ -36,6 +36,9 @@ typedef struct
     volatile uint32_t AUDIO_PLL_REG1;   /* 0x30 */
     volatile uint32_t AUDIO_PLL_REG2;   /* 0x34 */
     volatile uint32_t AUDIO_PLL_REG3;   /* 0x38 */
+#if defined(ENSEMBLE_SOC_GEN2)
+    volatile uint32_t SHARED_MEM_CTRL;  /* 0x3C */
+#endif
 #else
     volatile const uint32_t RESERVED3[4];
     volatile uint32_t PD4_CLK_SEL;      /* 0x40 */
