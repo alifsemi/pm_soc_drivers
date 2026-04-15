@@ -320,8 +320,8 @@ void pm_soc_clk_set_osc_sel(uint32_t xtal_sel)
 {
     /* OSC Control Register (0x00)
      *
-     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 38.4M HFXO (bolt)
-     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 76.8M HFXOx2 (eagle/spark)
+     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 38.4M HFXO (E1/E3/E5/E7)
+     * sys_xtal_sel[0] 0: 76.8M HFRC, 1: 76.8M HFXOx2 (B1/E1C/E4/E6/E8)
      *      used by SYST_REFCLK, SYSPLL_CLK, CPUPLL_CLK
      *
      * periph_xtal_sel[4] 0: 38.4M HFRC, 1: 38.4M HFXO
@@ -339,18 +339,19 @@ void pm_soc_clk_set_osc_sel(uint32_t xtal_sel)
 void pm_soc_clk_set_pll_sel(uint32_t pll_sel)
 {
     /* Switch from non-PLL to PLL clock
-     *  osc_mix_clk is result of sys_xtal_sel bit
-     *  osc_9p6M_clk is result of periph_xtal_sel bit
-     *  ESx HFRC/HFXO clk is result of ESCLK_SEL bits
+     *  osc_mix_clk is result of sys_xtal_sel bit in OSC_CTRL register
      *
-     *  SYST_REFCLK[0]  - osc_mix_clk  or PLL-100M
-     *  SYST_ACLK[4]    - osc_mix_clk  or PLL-400M
-     *  RESERVED[8]     - unused field
+     *  SYSREF[0] 0: osc_mix_clk, 1: PLL-100M (E1-E8) or PLL-80M (B1/E1C)
+     *      select the source for SYST_REFCLK
+     *  SYS[4] 0: osc_mix_clk, 1: PLL-400M (E1-E8) or PLL-160M (B1/E1C)
+     *      select the source for SYSPLL_CLK and CPUPLL_CLK (E5-E8)
      *  ES0[16]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
+     *      select the source for RTSS_HP_CLK
      *  ES1[20]         - HFRC/HFXO or PLL, refer to ESCLK_SEL
+     *      select the source for RTSS_HE_CLK
      */
     uint32_t reg_data = CGU->PLL_CLK_SEL;
-    reg_data &= ~(0x110111);
+    reg_data &= ~(0x110011);
     reg_data |=  (0x110011 & pll_sel);
     CGU->PLL_CLK_SEL = reg_data;
 }
