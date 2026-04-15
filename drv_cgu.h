@@ -33,31 +33,234 @@
 #define CGU_CLK_ENA_ETHOS_U85      (1U << 31)
 
 /* Per-clock enable/disable helper prototypes */
+
+/**
+  @fn       void CGU_clock_enable_syspll(bool enable)
+  @brief    Enable or disable the SYSPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_syspll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_cpupll(bool enable)
+  @brief    Enable or disable the CPUPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_cpupll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk25M(bool enable)
+  @brief    Enable or disable the 25MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk25M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk50M(bool enable)
+  @brief    Enable or disable the 50MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk50M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk100M(bool enable)
+  @brief    Enable or disable the 100MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk100M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk10M(bool enable)
+  @brief    Enable or disable the 10MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk10M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk80M(bool enable)
+  @brief    Enable or disable the 80MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk80M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_mram(bool enable)
+  @brief    Enable or disable the MRAM clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_mram(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk200M(bool enable)
+  @brief    Enable or disable the 200MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk200M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk400M(bool enable)
+  @brief    Enable or disable the 400MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk400M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_trace(bool enable)
+  @brief    Enable or disable the debug trace clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_trace(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_hfxo(bool enable)
+  @brief    Enable or disable the HFXO clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_hfxo(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk160M(bool enable)
+  @brief    Enable or disable the 160MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk160M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk266M(bool enable)
+  @brief    Enable or disable the 266MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk266M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk20M(bool enable)
+  @brief    Enable or disable the 20MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk20M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk38p4M(bool enable)
+  @brief    Enable or disable the 38.4MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk38p4M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk76p8M(bool enable)
+  @brief    Enable or disable the 76.8MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk76p8M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_pclk(bool enable)
+  @brief    Enable or disable the APB PCLK output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_pclk(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_hclk(bool enable)
+  @brief    Enable or disable the AHB HCLK output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_hclk(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram0(bool enable)
+  @brief    Enable or disable the SRAM0 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram0(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram1(bool enable)
+  @brief    Enable or disable the SRAM1 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram1(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_isp(bool enable)
+  @brief    Enable or disable the ISP clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_isp(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_jpeg(bool enable)
+  @brief    Enable or disable the JPEG clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_jpeg(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_ethos_u85(bool enable)
+  @brief    Enable or disable the Ethos-U85 NPU clock output from the
+            CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_ethos_u85(bool enable);
 
+/**
+  @fn       void CGU_clock_select_ospi_clk(uint32_t clk_sel)
+  @brief    Select the clock source feeding the OSPI (HEXSPI) block.
+            0 selects the ACLK-derived path (up to 400MHz), 1 selects a
+            fixed 266MHz source from the PLL.
+            Refer to "MISC_CLK_CTRL Register" in HWRM for more details.
+  @param    clk_sel OSPI clock source select (0 = ACLK path,
+                    1 = 266MHz PLL)
+  @return   None
+*/
 void CGU_clock_select_ospi_clk(uint32_t clk_sel);
 
 #elif defined(ENSEMBLE_SOC_E1C)
@@ -75,15 +278,95 @@ void CGU_clock_select_ospi_clk(uint32_t clk_sel);
 #define CGU_CLK_ENA_SRAM1          (1U << 28)
 
 /* Per-clock enable/disable helper prototypes */
+
+/**
+  @fn       void CGU_clock_enable_syspll(bool enable)
+  @brief    Enable or disable the SYSPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_syspll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_cpupll(bool enable)
+  @brief    Enable or disable the CPUPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_cpupll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_trace(bool enable)
+  @brief    Enable or disable the debug trace clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_trace(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_hfxo(bool enable)
+  @brief    Enable or disable the HFXO clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_hfxo(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk160M(bool enable)
+  @brief    Enable or disable the 160MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk160M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk100M(bool enable)
+  @brief    Enable or disable the 100MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk100M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk20M(bool enable)
+  @brief    Enable or disable the 20MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk20M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk38p4M(bool enable)
+  @brief    Enable or disable the 38.4MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk38p4M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram0(bool enable)
+  @brief    Enable or disable the SRAM0 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram0(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram1(bool enable)
+  @brief    Enable or disable the SRAM1 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram1(bool enable);
 
 #else
@@ -100,14 +383,86 @@ void CGU_clock_enable_sram1(bool enable);
 #define CGU_CLK_ENA_SRAM1          (1U << 28)
 
 /* Per-clock enable/disable helper prototypes */
+
+/**
+  @fn       void CGU_clock_enable_syspll(bool enable)
+  @brief    Enable or disable the SYSPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_syspll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_cpupll(bool enable)
+  @brief    Enable or disable the CPUPLL clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_cpupll(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_trace(bool enable)
+  @brief    Enable or disable the debug trace clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_trace(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk160M(bool enable)
+  @brief    Enable or disable the 160MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk160M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk100M(bool enable)
+  @brief    Enable or disable the 100MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk100M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk20M(bool enable)
+  @brief    Enable or disable the 20MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk20M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_clk38p4M(bool enable)
+  @brief    Enable or disable the 38.4MHz clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_clk38p4M(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram0(bool enable)
+  @brief    Enable or disable the SRAM0 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram0(bool enable);
+
+/**
+  @fn       void CGU_clock_enable_sram1(bool enable)
+  @brief    Enable or disable the SRAM1 clock output from the CGU.
+            Refer to "CLK_ENA Register" in HWRM for more details.
+  @param    enable  true to enable the clock, false to disable it
+  @return   None
+*/
 void CGU_clock_enable_sram1(bool enable);
 
 #endif

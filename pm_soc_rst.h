@@ -21,23 +21,106 @@
 #define WE_LPTIMER  0xF00     // bit11:8
 #define WE_LPGPIO   0xFF0000  // bit23:16
 
-/* TBD - there is no way to do this via RTSS */
+/**
+  @fn       void pm_soc_reset_soc(void)
+  @brief    Reset the entire SoC. TBD - there is currently no way to
+            perform a full SoC reset from RTSS, so this function is a
+            placeholder.
+  @return   None
+*/
 void pm_soc_reset_soc();
 
-/* TBD - there is no way to do this via RTSS */
+/**
+  @fn       void pm_soc_reset_apss(void)
+  @brief    Reset the APSS (Cortex-A) subsystem. TBD - there is currently
+            no way to perform an APSS reset from RTSS, so this function is
+            a placeholder.
+  @return   None
+*/
 void pm_soc_reset_apss();
 
-/* resetting the RTSS will leave it in the OFF state
- * vtor_address is where the CPU will start execution when booted */
+/**
+  @fn       void pm_soc_reset_rtss_hp(uint32_t vtor_address)
+  @brief    Reset the RTSS-HP (Cortex-M55 High Performance) subsystem.
+            Programs the boot vector table address, asserts reset with
+            CPUWAIT held, waits for the reset acknowledge, then releases
+            reset while keeping CPUWAIT asserted. After this call RTSS-HP
+            is left in the OFF state; use pm_soc_boot_rtss_hp() to actually
+            start the core.
+            Refer to "RTSS_HP_CTRL Register", "CM55_HP_SE_VTOR Register",
+            "EXT_SYS0_RST_CTRL Register" and "EXT_SYS0_RST_ST Register" in
+            HWRM for more details.
+  @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
+  @param    vtor_address    Address where the RTSS-HP CPU will start
+                            execution when booted
+  @return   None
+*/
 void pm_soc_reset_rtss_hp(uint32_t vtor_address);
+
+/**
+  @fn       void pm_soc_reset_rtss_he(uint32_t vtor_address)
+  @brief    Reset the RTSS-HE (Cortex-M55 High Efficiency) subsystem.
+            Programs the boot vector table address, asserts reset with
+            CPUWAIT held, waits for the reset acknowledge, then releases
+            reset while keeping CPUWAIT asserted. After this call RTSS-HE
+            is left in the OFF state; use pm_soc_boot_rtss_he() to actually
+            start the core.
+            Refer to "RTSS_HE_CTRL Register", "CM55_HE_SE_VTOR Register",
+            "EXT_SYS1_RST_CTRL Register" and "EXT_SYS1_RST_ST Register" in
+            HWRM for more details.
+  @param    vtor_address    Address where the RTSS-HE CPU will start
+                            execution when booted
+  @return   None
+*/
 void pm_soc_reset_rtss_he(uint32_t vtor_address);
 
-/* booting the RTSS will bring it out of the OFF state,
- * there is no effect if the RTSS was booted already */
+/**
+  @fn       void pm_soc_boot_rtss_hp(void)
+  @brief    Boot the RTSS-HP (Cortex-M55 High Performance) subsystem by
+            releasing CPUWAIT, then performing a dummy read of the RTSS-HP
+            TCM to force clocks to start. Has no effect if RTSS-HP was
+            booted already.
+            Refer to "EXT_SYS0_RST_CTRL Register" in HWRM for more details.
+  @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
+  @return   None
+*/
 void pm_soc_boot_rtss_hp();
+
+/**
+  @fn       void pm_soc_boot_rtss_he(void)
+  @brief    Boot the RTSS-HE (Cortex-M55 High Efficiency) subsystem by
+            releasing CPUWAIT, then performing a dummy read of the RTSS-HE
+            TCM to force clocks to start. Has no effect if RTSS-HE was
+            booted already.
+            Refer to "EXT_SYS1_RST_CTRL Register" in HWRM for more details.
+  @return   None
+*/
 void pm_soc_boot_rtss_he();
 
 /* TBD - implement functions for STOP Mode and Getting Wake-up Status */
+
+/**
+  @fn       void pm_soc_enter_stop_mode(void)
+  @brief    Enter SoC STOP mode. TBD - not yet implemented; this is a
+            placeholder for a future entry sequence.
+  @return   None
+*/
 void pm_soc_enter_stop_mode();
+
+/**
+  @fn       void pm_soc_enable_stop_mode_wake_sources(void)
+  @brief    Enable the wake sources that can bring the SoC out of STOP
+            mode. TBD - not yet implemented; will program the VBATSEC
+            WAKEUP_CTRL register.
+  @return   None
+*/
 void pm_soc_enable_stop_mode_wake_sources();    // VBATSEC WAKEUP_CTRL register
+
+/**
+  @fn       void pm_soc_get_stop_mode_wake_pending(void)
+  @brief    Get the set of wake sources that are currently pending for
+            STOP mode exit. TBD - not yet implemented; will read the
+            SE_EWIC EWIC_STAT register.
+  @return   None
+*/
 void pm_soc_get_stop_mode_wake_pending();       // SE_EWIC EWIC_STAT register
