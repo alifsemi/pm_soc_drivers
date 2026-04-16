@@ -67,8 +67,7 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
         reg1_val |= 0x7D << 20;
         break;
     default:
-        while(1);
-        break;
+        return;
     }
 
     /* set fast start bit if needed */
@@ -94,6 +93,9 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     /* reset clock outputs */
     CGU->CLK_ENA |= (1U << 18);
     CGU->CLK_ENA &= ~(1U << 18);
+
+    /* set PLL LOCK bit */
+    CGU->PLL_LOCK_CTRL = 1;
 }
 
 static void PLL_clkpll_start_e1c(uint32_t xtal_freq, bool faststart)
@@ -135,8 +137,7 @@ static void PLL_clkpll_start_e1c(uint32_t xtal_freq, bool faststart)
         reg1_val |= 0x19 << 20;
         break;
     default:
-        while(1);
-        break;
+        return;
     }
 
     /* set fast start bit if needed */
@@ -160,6 +161,9 @@ static void PLL_clkpll_start_e1c(uint32_t xtal_freq, bool faststart)
         reg1_val &= ~(1U << 30);
         AONSEC->MCUPLL_REG1 = reg1_val;
     }
+
+    /* set PLL LOCK bit */
+    CGU->PLL_LOCK_CTRL = 1;
 }
 
 static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
@@ -201,8 +205,7 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
         reg1_val |= 0x29 << 20 | 0xAAAAA;
         break;
     default:
-        while(1);
-        break;
+        return;
     }
 
     /* set fast start bit if needed */
@@ -230,6 +233,9 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     /* reset clock outputs */
     CGU->CLK_ENA |= (1U << 18);
     CGU->CLK_ENA &= ~(1U << 18);
+
+    /* set PLL LOCK bit */
+    CGU->PLL_LOCK_CTRL = 1;
 }
 
 static void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
@@ -245,9 +251,6 @@ static void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
 #else
     PLL_clkpll_start_e3(xtal_freq, faststart);
 #endif
-
-    /* set PLL LOCK bit */
-    CGU->PLL_LOCK_CTRL = 1;
 }
 
 static void PLL_clkpll_stop()

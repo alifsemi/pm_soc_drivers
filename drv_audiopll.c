@@ -45,14 +45,13 @@ static void AUDIOPLL_clkpll_start(uint32_t xtal_freq, bool faststart)
         reg1_val |= 0xC << 20 | 0xCCCCC;
         break;
     case 20000000:
-        reg1_val |= 0xF << 0x5C28F;
+        reg1_val |= 0xF << 20 | 0x5C28F;
         break;
     case 19200000:
         reg1_val |= 0x10 << 20;
         break;
     default:
-        while(1);
-        break;
+        return;
     }
 
     /* set fast start bit if needed */
