@@ -40,7 +40,7 @@ void pm_soc_reset_soc();
 void pm_soc_reset_apss();
 
 /**
-  @fn       void pm_soc_reset_rtss_hp(uint32_t vtor_address)
+  @fn       int32_t pm_soc_reset_rtss_hp(uint32_t vtor_address)
   @brief    Reset the RTSS-HP (Cortex-M55 High Performance) subsystem.
             Programs the boot vector table address, asserts reset with
             CPUWAIT held, waits for the reset acknowledge, then releases
@@ -53,12 +53,12 @@ void pm_soc_reset_apss();
   @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
   @param    vtor_address    Address where the RTSS-HP CPU will start
                             execution when booted
-  @return   None
+  @return   0 on success, -1 on reset timeout or if not applicable
 */
-void pm_soc_reset_rtss_hp(uint32_t vtor_address);
+int32_t pm_soc_reset_rtss_hp(uint32_t vtor_address);
 
 /**
-  @fn       void pm_soc_reset_rtss_he(uint32_t vtor_address)
+  @fn       int32_t pm_soc_reset_rtss_he(uint32_t vtor_address)
   @brief    Reset the RTSS-HE (Cortex-M55 High Efficiency) subsystem.
             Programs the boot vector table address, asserts reset with
             CPUWAIT held, waits for the reset acknowledge, then releases
@@ -70,32 +70,32 @@ void pm_soc_reset_rtss_hp(uint32_t vtor_address);
             HWRM for more details.
   @param    vtor_address    Address where the RTSS-HE CPU will start
                             execution when booted
-  @return   None
+  @return   0 on success, -1 on reset timeout
 */
-void pm_soc_reset_rtss_he(uint32_t vtor_address);
+int32_t pm_soc_reset_rtss_he(uint32_t vtor_address);
 
 /**
-  @fn       void pm_soc_boot_rtss_hp(void)
+  @fn       int32_t pm_soc_boot_rtss_hp(void)
   @brief    Boot the RTSS-HP (Cortex-M55 High Performance) subsystem by
             releasing CPUWAIT, then performing a dummy read of the RTSS-HP
             TCM to force clocks to start. Has no effect if RTSS-HP was
             booted already.
             Refer to "EXT_SYS0_RST_CTRL Register" in HWRM for more details.
   @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
-  @return   None
+  @return   0 on success or if core was already booted, -1 if not applicable
 */
-void pm_soc_boot_rtss_hp();
+int32_t pm_soc_boot_rtss_hp(void);
 
 /**
-  @fn       void pm_soc_boot_rtss_he(void)
+  @fn       int32_t pm_soc_boot_rtss_he(void)
   @brief    Boot the RTSS-HE (Cortex-M55 High Efficiency) subsystem by
             releasing CPUWAIT, then performing a dummy read of the RTSS-HE
             TCM to force clocks to start. Has no effect if RTSS-HE was
             booted already.
             Refer to "EXT_SYS1_RST_CTRL Register" in HWRM for more details.
-  @return   None
+  @return   0 on success or if core was already booted
 */
-void pm_soc_boot_rtss_he();
+int32_t pm_soc_boot_rtss_he(void);
 
 /* TBD - implement functions for STOP Mode and Getting Wake-up Status */
 
