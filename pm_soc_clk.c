@@ -174,6 +174,9 @@ uint32_t pm_soc_clk_get_axiclk()
     else if (aclk_status == 2) {
         SystemAXIClock = SystSyspllUpdate() / ((HOSTBASE->ACLK_DIV0 >> 16) + 1);
     }
+    else {
+        SystemAXIClock = 0;
+    }
 
     return SystemAXIClock;
 }
@@ -223,20 +226,14 @@ uint32_t pm_soc_clk_get_apbclk()
  *----------------------------------------------------------------------------*/
 uint32_t pm_soc_clk_get_busclk()
 {
-    uint32_t aclk_status = (HOSTBASE->ACLK_CTRL >> 8) & 0xFF;
+    pm_soc_clk_get_axiclk();
+
     uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
     uint8_t hclk_div = (syst_clkdiv >> 8) & 3;
     uint8_t pclk_div = syst_clkdiv & 3;
 
     hclk_div = hclk_div > 2 ? 2 : hclk_div;
     pclk_div = pclk_div > 2 ? 2 : pclk_div;
-
-    if (aclk_status == 1) {
-        SystemAXIClock = pm_soc_clk_get_refclk();
-    }
-    else if (aclk_status == 2) {
-        SystemAXIClock = SystSyspllUpdate() / ((HOSTBASE->ACLK_DIV0 >> 16) + 1);
-    }
 
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
     uint32_t syspll_clk = SystSyspllUpdate();
