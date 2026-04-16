@@ -192,7 +192,7 @@ uint32_t pm_soc_clk_get_ahbclk()
     SystemAHBClock = syspll_clk >> hclk_div;
 #else
     uint32_t systaxi_clk = pm_soc_clk_get_axiclk();
-    SystemAHBClock = SystemAXIClock >> hclk_div;
+    SystemAHBClock = systaxi_clk >> hclk_div;
 #endif
 
     return SystemAHBClock;
@@ -212,7 +212,7 @@ uint32_t pm_soc_clk_get_apbclk()
     SystemAPBClock = syspll_clk >> pclk_div;
 #else
     uint32_t systaxi_clk = pm_soc_clk_get_axiclk();
-    SystemAPBClock = SystemAXIClock >> pclk_div;
+    SystemAPBClock = systaxi_clk >> pclk_div;
 #endif
 
     return SystemAPBClock;
