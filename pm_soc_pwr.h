@@ -92,9 +92,8 @@ void pm_soc_enable_syst_sram(uint32_t sram_select);
             Refer to "RET_CTRL Register" in HWRM for more details.
   @note     Only applicable on ENSEMBLE_SOC_GEN2 (Ensemble E4/E6/E8);
             the call is a no-op on other families.
-  @param    retention_select    Bitmask of banks to retain (see
-                                PD6_RETAIN_SRAM0_*/PD6_RETAIN_SRAM1_*
-                                macros)
+  @param    retention_select    Bitmask of banks to retain (see macros for
+                                PD6_RETAIN_SRAM0_* and PD6_RETAIN_SRAM1_* )
   @return   None
 */
 void pm_soc_retain_syst_sram(uint32_t retention_select);
