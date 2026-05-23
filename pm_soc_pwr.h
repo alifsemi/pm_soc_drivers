@@ -107,11 +107,17 @@ void pm_soc_set_dcdc_voltage(uint32_t millivolts);
 
 /**
   @fn       void pm_soc_enable_syst_sram(uint32_t sram_select)
-  @brief    Enable power and clock to the selected PD6 SYST SRAM banks.
-            Banks not selected have their clocks gated and their power
-            masked off. Includes a short busy wait for BISR to complete.
+  @brief    Control clock and power to the selected PD6 SYST SRAM banks
+            while PD6 SYST is on. Banks not selected have their clocks
+            gated and their power masked off. Includes a short busy wait
+            for BISR to complete.
             Refer to "CLK_ENA Register" and "PWR_CTRL Register" in HWRM
             for more details.
+  @note     Orthogonal to retention: this only governs the on-state of
+            the banks while PD6 SYST is powered. Whether bank contents
+            survive while PD6 SYST is off is controlled separately by
+            pm_soc_retain_syst_sram(). Either function may be called
+            without the other.
   @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
   @param    sram_select Bitmask of banks to enable: SYST_SRAM0_EN and/or
                         SYST_SRAM1_EN
@@ -120,11 +126,35 @@ void pm_soc_set_dcdc_voltage(uint32_t millivolts);
 void pm_soc_enable_syst_sram(uint32_t sram_select);
 
 /**
-  @fn       void pm_soc_retain_syst_sram(uint32_t retention_select)
-  @brief    Configure retention power for the PD6 SYST SRAM banks so that
-            their contents survive while PD6 is powered off. Any banks not
-            listed in retention_select are left without retention.
+  @fn       void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
+  @brief    Configure retention power for the PD3 RTSS_HE TCM memories
+            (ITCM and DTCM) so that their contents survive while PD3 is
+            powered off. Banks not listed in retention_select are left
+            without retention.
             Refer to "RET_CTRL Register" in HWRM for more details.
+  @note     The bit layout in VBATALL->RET_CTRL differs across families
+            (E1C uses bits [6:1]; E3+ use bits [7:4]) and the
+            granularity differs too. Always use the PD3_RETAIN_ITCM_* and
+            PD3_RETAIN_DTCM_* macros instead of hand-crafting a bitmask,
+            so that the same source builds correctly for every family.
+  @param    retention_select    Bitmask of TCM blocks to retain (see
+                                PD3_RETAIN_ITCM_* and PD3_RETAIN_DTCM_*
+                                macros; may be OR-ed together)
+  @return   None
+*/
+void pm_soc_retain_rtss_he_tcm(uint32_t retention_select);
+
+/**
+  @fn       void pm_soc_retain_syst_sram(uint32_t retention_select)
+  @brief    Control whether the PD6 SYST SRAM bank contents survive
+            while PD6 SYST is off. Any banks not listed in
+            retention_select are left without retention.
+            Refer to "RET_CTRL Register" in HWRM for more details.
+  @note     Orthogonal to enable: this only governs the off-state of the
+            banks while PD6 SYST is unpowered. Whether the banks are
+            clocked and powered while PD6 SYST is on is controlled
+            separately by pm_soc_enable_syst_sram(). Either function may
+            be called without the other.
   @note     Only applicable on ENSEMBLE_SOC_GEN2 (Ensemble E4/E6/E8);
             the call is a no-op on other families.
   @param    retention_select    Bitmask of banks to retain (see macros for
