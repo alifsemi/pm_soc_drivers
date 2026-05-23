@@ -25,6 +25,8 @@
   @fn       void pm_soc_set_dcdc_pfm(void)
   @brief    Put the internal DCDC converter into PFM (pulse frequency
             modulation) mode, which favors efficiency at light loads.
+            Recommended when VDD_BUCK power is <15mW. Between 15-20mW,
+            PFM and PWM are equivalent; above 20mW, use PWM mode instead.
             Refer to "DCDC_REG2 Register" in HWRM for more details.
   @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
   @return   None
@@ -36,6 +38,8 @@ void pm_soc_set_dcdc_pfm(void);
   @brief    Put the internal DCDC converter into PWM (pulse width
             modulation) mode, which favors regulation quality at higher
             loads.
+            Recommended when VDD_BUCK power is >20mW. Between 15-20mW,
+            PWM and PFM are equivalent; below 15mW, use PFM mode instead.
             Refer to "DCDC_REG2 Register" in HWRM for more details.
   @note     Not applicable on ENSEMBLE_SOC_E1C; the call is a no-op.
   @return   None
