@@ -118,18 +118,39 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 #endif
 }
 
-void pm_soc_retain_syst_sram(uint32_t retention_select)
+void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 {
-#if !defined(ENSEMBLE_SOC_GEN2)
-    return; /* only applicable for Ensemble E4/E6/E8 */
+#if defined(ENSEMBLE_SOC_E1C)
+    uint32_t reg_data;
+    reg_data = VBATALL->RET_CTRL;
+
+    /* HW polarity: 1=retain (matches the macro bits directly) */
+    reg_data &= ~(0x7EU); /* clear retention bits 1..6 (no retention by default) */
+    reg_data |= (retention_select & 0x7EU); /* set bits for TCM blocks to retain */
+    VBATALL->RET_CTRL = reg_data;
 #else
     uint32_t reg_data;
     reg_data = VBATALL->RET_CTRL;
 
-    /* do not touch bits 0-7 */
-    reg_data |= 0x3FF00; /* set all retention bits to 1 (no retention) */
-    reg_data &= ~(retention_select); /* clear bits for SRAM blocks that should be retained */
+    /* HW polarity: 0=retain (function inverts the caller's mask) */
+    reg_data |= 0xF0; /* set retention bits 4..7 (no retention by default) */
+    reg_data &= ~(retention_select & 0xF0); /* clear bits for TCM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
+#endif
+}
+
+void pm_soc_retain_syst_sram(uint32_t retention_select)
+{
+#if defined(ENSEMBLE_SOC_GEN2)
+    uint32_t reg_data;
+    reg_data = VBATALL->RET_CTRL;
+
+    /* when bits are clear, retention is enabled */
+    reg_data |= 0x3FF00; /* set retention bits to 8-17 (no retention by default) */
+    reg_data &= ~(retention_select & 0x3FF00); /* clear bits for SRAM blocks to retain */
+    VBATALL->RET_CTRL = reg_data;
+#else
+    return; /* only applicable for Ensemble E4/E6/E8 */
 #endif
 }
 

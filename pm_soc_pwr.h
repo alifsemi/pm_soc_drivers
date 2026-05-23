@@ -3,6 +3,37 @@
 #define SYST_SRAM0_EN 1
 #define SYST_SRAM1_EN 2
 
+#if defined(ENSEMBLE_SOC_E1C)
+/* ENSEMBLE_SOC_E1C only - PD3 RTSS_HE TCM retention (VBATALL->RET_CTRL[6:1]).
+ * Macro bits select the rails to retain; pm_soc_retain_rtss_he_tcm() handles
+ * the hardware polarity internally. Sizes are cumulative: each larger macro
+ * OR-s in the smaller one, and an ITCM macro may be OR-ed with a DTCM macro
+ * to retain both. */
+#define PD3_RETAIN_ITCM_64KB    (1U << 1)                               /* A1 */
+#define PD3_RETAIN_ITCM_128KB   ((1U << 3) | PD3_RETAIN_ITCM_64KB)      /* A1 + B */
+#define PD3_RETAIN_ITCM_256KB   ((1U << 4) | PD3_RETAIN_ITCM_128KB)     /* A1 + B + C */
+#define PD3_RETAIN_ITCM_512KB   ((1U << 5) | PD3_RETAIN_ITCM_256KB)     /* A1 + B + C + D */
+
+#define PD3_RETAIN_DTCM_64KB    (3U << 1)                               /* A1 + A2 */
+#define PD3_RETAIN_DTCM_128KB   ((1U << 3) | PD3_RETAIN_DTCM_64KB)      /* A1 + A2 + B */
+#define PD3_RETAIN_DTCM_256KB   ((1U << 4) | PD3_RETAIN_DTCM_128KB)     /* A1 + A2 + B + C */
+#define PD3_RETAIN_DTCM_512KB   ((1U << 5) | PD3_RETAIN_DTCM_256KB)     /* A1 + A2 + B + C + D */
+#define PD3_RETAIN_DTCM_1536KB  ((1U << 6) | PD3_RETAIN_DTCM_512KB)     /* A1 + A2 + B + C + D + E */
+
+#else
+/* ENSEMBLE_SOC_GEN2 and GEN1 - PD3 RTSS_HE TCM retention (VBATALL->RET_CTRL[7:4]).
+ * Macro bits select the rails to retain; pm_soc_retain_rtss_he_tcm() handles
+ * the hardware polarity internally. Sizes are cumulative: each larger macro
+ * OR-s in the smaller one, and an ITCM macro may be OR-ed with a DTCM macro
+ * to retain both. */
+#define PD3_RETAIN_ITCM_128KB   (3U << 4)                               /* RET1 */
+#define PD3_RETAIN_ITCM_256KB   ((3U << 6) | PD3_RETAIN_ITCM_128KB)     /* RET1 + RET2 */
+
+#define PD3_RETAIN_DTCM_128KB   (3U << 4)                               /* RET1 */
+#define PD3_RETAIN_DTCM_256KB   ((3U << 6) | PD3_RETAIN_DTCM_128KB)     /* RET1 + RET2 */
+
+#endif
+
 /* ENSEMBLE_SOC_GEN1 only */
 #define PD4_CLK_HFXO        0
 #define PD4_CLK_PLL160M     1
