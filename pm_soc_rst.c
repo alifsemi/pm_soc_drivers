@@ -24,6 +24,7 @@ int32_t pm_soc_reset_rtss_hp(uint32_t vtor_address)
 
     return timeout == 0 ? -1 : 0;
 #else
+    (void) vtor_address;
     return -1;
 #endif
 }
