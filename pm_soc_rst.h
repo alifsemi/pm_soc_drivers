@@ -25,7 +25,7 @@
   @fn       void pm_soc_reset_soc(void)
   @brief    Reset the entire SoC. TBD - there is currently no way to
             perform a full SoC reset from RTSS, so this function is a
-            placeholder.
+            placeholder. Use SERVICES_boot_reset_soc() instead.
   @return   None
 */
 void pm_soc_reset_soc();
@@ -34,7 +34,9 @@ void pm_soc_reset_soc();
   @fn       void pm_soc_reset_apss(void)
   @brief    Reset the APSS (Cortex-A) subsystem. TBD - there is currently
             no way to perform an APSS reset from RTSS, so this function is
-            a placeholder.
+            a placeholder. Use SERVICES_boot_reset_soc() instead. Do not
+            use SERVICES_boot_reset_cpu() to reset the APSS because this
+            will also reset the RTSS and make the SoC unresponsive.
   @return   None
 */
 void pm_soc_reset_apss();
@@ -44,7 +46,7 @@ void pm_soc_reset_apss();
   @brief    Reset the RTSS-HP (Cortex-M55 High Performance) subsystem.
             Programs the boot vector table address, asserts reset with
             CPUWAIT held, waits for the reset acknowledge, then releases
-            reset while keeping CPUWAIT asserted. After this call RTSS-HP
+            reset while keeping CPUWAIT asserted. After this call, RTSS-HP
             is left in the OFF state; use pm_soc_boot_rtss_hp() to actually
             start the core.
             Refer to "RTSS_HP_CTRL Register", "CM55_HP_SE_VTOR Register",
@@ -62,7 +64,7 @@ int32_t pm_soc_reset_rtss_hp(uint32_t vtor_address);
   @brief    Reset the RTSS-HE (Cortex-M55 High Efficiency) subsystem.
             Programs the boot vector table address, asserts reset with
             CPUWAIT held, waits for the reset acknowledge, then releases
-            reset while keeping CPUWAIT asserted. After this call RTSS-HE
+            reset while keeping CPUWAIT asserted. After this call, RTSS-HE
             is left in the OFF state; use pm_soc_boot_rtss_he() to actually
             start the core.
             Refer to "RTSS_HE_CTRL Register", "CM55_HE_SE_VTOR Register",
