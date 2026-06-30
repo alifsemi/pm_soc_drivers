@@ -2,12 +2,21 @@
 
 /**
   @fn       uint32_t pm_soc_clk_get_hfrc(void)
-  @brief    Get the current HFRC oscillator frequency in Hz, taking the
-            active-mode HFRC divider into account.
+  @brief    Get the current HFRC oscillator frequency in Hz, calculated
+            from the active-mode HFRC divider.
             Refer to "VBAT_ANA_REG2 Register" in HWRM for more details.
   @return   HFRC clock frequency in Hz
 */
 uint32_t pm_soc_clk_get_hfrc();
+
+/**
+  @fn       uint32_t pm_soc_clk_get_hfrc_standby(void)
+  @brief    Get the Standby Mode HFRC oscillator frequency in Hz, calculated
+            from the standby-mode HFRC divider.
+            Refer to "VBAT_ANA_REG2 Register" in HWRM for more details.
+  @return   standby mode HFRC clock frequency in Hz
+*/
+uint32_t pm_soc_clk_get_hfrc_standby();
 
 /**
   @fn       uint32_t pm_soc_clk_get_hfxo(void)

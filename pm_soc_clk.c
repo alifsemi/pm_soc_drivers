@@ -63,6 +63,11 @@ uint32_t pm_soc_clk_get_hfrc()
     return 76800000 >> GetDividerActiveHFRC();
 }
 
+uint32_t pm_soc_clk_get_hfrc_standby()
+{
+    return 76800000 >> GetDividerStandbyHFRC();
+}
+
 uint32_t pm_soc_clk_get_hfxo()
 {
     return 38400000 >> GetDividerActiveHFXO();
