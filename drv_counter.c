@@ -1,7 +1,9 @@
+#include "soc_hostbase.h"
 #include "drv_counter.h"
 #include "pm_soc_clk.h"
 
 void refclk_cntr_init() {
+    HOSTBASE->BSYS_PWR_REQ |= HOSTBASE_BSYS_PWR_REQ_REFCLK_REQ_Msk;
     *((volatile uint32_t *)0x1A200000) = 1;
     *((volatile uint32_t *)0x1A220000) = pm_soc_clk_get_refclk();
 }

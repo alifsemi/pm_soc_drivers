@@ -156,22 +156,27 @@ void pm_soc_retain_syst_sram(uint32_t retention_select)
 
 void pm_soc_enable_pd_syst()
 {
-    HOSTBASE->BSYS_PWR_REQ |= 1U << 4;
+    uint32_t mask = HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_FUNC_RET;
+    HOSTBASE->BSYS_PWR_REQ |=  (mask);
 }
 
 void pm_soc_disable_pd_syst()
 {
-    HOSTBASE->BSYS_PWR_REQ &= ~(1U << 4);
+    uint32_t mask = HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_FUNC_RET |
+                    HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_ON;
+    HOSTBASE->BSYS_PWR_REQ &= ~(mask);
 }
 
 void pm_soc_enable_pd_debug()
 {
-    HOSTBASE->BSYS_PWR_REQ |= 1U << 2;
+    uint32_t mask = HOSTBASE_BSYS_PWR_REQ_DBGTOP_PWR_REQ_Msk;
+    HOSTBASE->BSYS_PWR_REQ |=  (mask);
 }
 
 void pm_soc_disable_pd_debug()
 {
-    HOSTBASE->BSYS_PWR_REQ &= ~(1U << 2);
+    uint32_t mask = HOSTBASE_BSYS_PWR_REQ_DBGTOP_PWR_REQ_Msk;
+    HOSTBASE->BSYS_PWR_REQ &= ~(mask);
 }
 
 void pm_soc_enable_pd_sram_aon(uint32_t retention_select)

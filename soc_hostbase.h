@@ -1,77 +1,166 @@
 #include <stdint.h>
 
 /* PD2 AON Register Base Addresses */
-#define HOSTBASE_BASE   0x1A010000
+#define HOSTBASE_BASE 0x1A010000
 
 typedef struct
 {
-	volatile uint32_t CLUSTER_CONFIG;
-	volatile const uint32_t reserved1[3];
-	volatile uint32_t PE0_CONFIG;
-	volatile uint32_t PE0_RVBARADDR_LW;
-	volatile const uint32_t PE0_RVBARADDR_UP;
-	volatile const uint32_t reserved_PE0;
-	volatile uint32_t PE1_CONFIG;
-	volatile uint32_t PE1_RVBARADDR_LW;
-	volatile const uint32_t PE1_RVBARADDR_UP;
-	volatile const uint32_t reserved_PE1;
-	volatile uint32_t PE2_CONFIG;
-	volatile uint32_t PE2_RVBARADDR_LW;
-	volatile const uint32_t PE2_RVBARADDR_UP;
-	volatile const uint32_t reserved_PE2;
-	volatile uint32_t PE3_CONFIG;
-	volatile uint32_t PE3_RVBARADDR_LW;
-	volatile const uint32_t PE3_RVBARADDR_UP;
-	volatile const uint32_t reserved_PE3;
-	volatile const uint32_t reserved2[108];
-	volatile const uint32_t HOST_RST_SYN;
-	volatile const uint32_t reserved3[63];
-	volatile uint32_t HOST_CPU_BOOT_MSK;
-	volatile uint32_t HOST_CPU_CLUS_PWR_REQ;
-	volatile uint32_t HOST_CPU_WAKEUP;
-	volatile const uint32_t reserved4;
-	volatile uint32_t EXT_SYS0_RST_CTRL;
-	volatile const uint32_t EXT_SYS0_RST_ST;
-	volatile uint32_t EXT_SYS1_RST_CTRL;
-	volatile const uint32_t EXT_SYS1_RST_ST;
-	volatile const uint32_t reserved5[56];
-	volatile uint32_t BSYS_PWR_REQ;
-	volatile const uint32_t BSYS_PWR_ST;
-	volatile const uint32_t reserved6[62];
-	volatile const uint32_t HOST_SYS_LCTRL_ST;
-	volatile uint32_t HOST_SYS_LCTRL_SET;
-	volatile uint32_t HOST_SYS_LCTRL_CLR;
-	volatile const uint32_t reserved7[189];
-	volatile uint32_t HOSTCPUCLK_CTRL;
-	volatile uint32_t HOSTCPUCLK_DIV0;
-	volatile uint32_t HOSTCPUCLK_DIV1;
-	volatile const uint32_t reserved8;
-	volatile uint32_t GICCLK_CTRL;
-	volatile uint32_t GICCLK_DIV0;
-	volatile const uint32_t reserved9[2];
-	volatile uint32_t ACLK_CTRL;
-	volatile uint32_t ACLK_DIV0;
-	volatile const uint32_t reserved10[2];
-	volatile uint32_t CTRLCLK_CTRL;
-	volatile uint32_t CTRLCLK_DIV0;
-	volatile const uint32_t reserved11[2];
-	volatile uint32_t DBGCLK_CTRL;
-	volatile uint32_t DBGCLK_DIV0;
-	volatile const uint32_t reserved12[2];
-	volatile uint32_t HOSTUARTCLK_CTRL;
-	volatile uint32_t HOSTUARTCLK_DIV0;
-	volatile const uint32_t reserved13[2];
-	volatile uint32_t REFCLK_CTRL;
-	volatile const uint32_t reserved14[103];
-	volatile const uint32_t CLKFORCE_ST;
-	volatile uint32_t CLKFORCE_SET;
-	volatile uint32_t CLKFORCE_CLR;
-	volatile const uint32_t reserved15;
-	volatile const uint32_t PLL_ST;
-	volatile const uint32_t reserved16[59];
-	volatile const uint32_t HOST_PPU_INT_ST;
-	volatile const uint32_t reserved17[307];
-	volatile const uint32_t PERIPHERAL_ID[12];
+    volatile uint32_t CLUSTER_CONFIG;
+    volatile const uint32_t reserved1[3];
+    volatile uint32_t PE0_CONFIG;
+    volatile uint32_t PE0_RVBARADDR_LW;
+    volatile const uint32_t PE0_RVBARADDR_UP;
+    volatile const uint32_t reserved_PE0;
+    volatile uint32_t PE1_CONFIG;
+    volatile uint32_t PE1_RVBARADDR_LW;
+    volatile const uint32_t PE1_RVBARADDR_UP;
+    volatile const uint32_t reserved_PE1;
+    volatile uint32_t PE2_CONFIG;
+    volatile uint32_t PE2_RVBARADDR_LW;
+    volatile const uint32_t PE2_RVBARADDR_UP;
+    volatile const uint32_t reserved_PE2;
+    volatile uint32_t PE3_CONFIG;
+    volatile uint32_t PE3_RVBARADDR_LW;
+    volatile const uint32_t PE3_RVBARADDR_UP;
+    volatile const uint32_t reserved_PE3;
+    volatile const uint32_t reserved2[108];
+    volatile const uint32_t HOST_RST_SYN;
+    volatile const uint32_t reserved3[63];
+    volatile uint32_t HOST_CPU_BOOT_MSK;
+    volatile uint32_t HOST_CPU_CLUS_PWR_REQ;
+    volatile uint32_t HOST_CPU_WAKEUP;
+    volatile const uint32_t reserved4;
+    volatile uint32_t EXT_SYS0_RST_CTRL;
+    volatile const uint32_t EXT_SYS0_RST_ST;
+    volatile uint32_t EXT_SYS1_RST_CTRL;
+    volatile const uint32_t EXT_SYS1_RST_ST;
+    volatile const uint32_t reserved5[56];
+    volatile uint32_t BSYS_PWR_REQ;
+    volatile const uint32_t BSYS_PWR_ST;
+    volatile const uint32_t reserved6[62];
+    volatile const uint32_t HOST_SYS_LCTRL_ST;
+    volatile uint32_t HOST_SYS_LCTRL_SET;
+    volatile uint32_t HOST_SYS_LCTRL_CLR;
+    volatile const uint32_t reserved7[189];
+    volatile uint32_t HOSTCPUCLK_CTRL;
+    volatile uint32_t HOSTCPUCLK_DIV0;
+    volatile uint32_t HOSTCPUCLK_DIV1;
+    volatile const uint32_t reserved8;
+    volatile uint32_t GICCLK_CTRL;
+    volatile uint32_t GICCLK_DIV0;
+    volatile const uint32_t reserved9[2];
+    volatile uint32_t ACLK_CTRL;
+    volatile uint32_t ACLK_DIV0;
+    volatile const uint32_t reserved10[2];
+    volatile uint32_t CTRLCLK_CTRL;
+    volatile uint32_t CTRLCLK_DIV0;
+    volatile const uint32_t reserved11[2];
+    volatile uint32_t DBGCLK_CTRL;
+    volatile uint32_t DBGCLK_DIV0;
+    volatile const uint32_t reserved12[2];
+    volatile uint32_t HOSTUARTCLK_CTRL;
+    volatile uint32_t HOSTUARTCLK_DIV0;
+    volatile const uint32_t reserved13[2];
+    volatile uint32_t REFCLK_CTRL;
+    volatile const uint32_t reserved14[103];
+    volatile const uint32_t CLKFORCE_ST;
+    volatile uint32_t CLKFORCE_SET;
+    volatile uint32_t CLKFORCE_CLR;
+    volatile const uint32_t reserved15;
+    volatile const uint32_t PLL_ST;
+    volatile const uint32_t reserved16[59];
+    volatile const uint32_t HOST_PPU_INT_ST;
+    volatile const uint32_t reserved17[307];
+    volatile const uint32_t PERIPHERAL_ID[12];
 } HOSTBASE_Type;
 
-#define HOSTBASE ((HOSTBASE_Type *) HOSTBASE_BASE)
+/* HOST_CPU_CLUS_PWR_REQ register bit fields */
+#define HOSTBASE_HOST_CPU_CLUS_PWR_REQ_PWR_REQ_Pos     (0U)
+#define HOSTBASE_HOST_CPU_CLUS_PWR_REQ_PWR_REQ_Msk     (1U << HOSTBASE_HOST_CPU_CLUS_PWR_REQ_PWR_REQ_Pos)
+#define HOSTBASE_HOST_CPU_CLUS_PWR_REQ_MEM_RET_REQ_Pos (1U)
+#define HOSTBASE_HOST_CPU_CLUS_PWR_REQ_MEM_RET_REQ_Msk (1U << HOSTBASE_HOST_CPU_CLUS_PWR_REQ_MEM_RET_REQ_Pos)
+
+/* HOST_CPU_WAKEUP register bit fields */
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE0_WAKEUP_Pos (0U)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE0_WAKEUP_Msk (1U << HOSTBASE_HOST_CPU_WAKEUP_CORE0_WAKEUP_Pos)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE1_WAKEUP_Pos (1U)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE1_WAKEUP_Msk (1U << HOSTBASE_HOST_CPU_WAKEUP_CORE1_WAKEUP_Pos)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE2_WAKEUP_Pos (2U)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE2_WAKEUP_Msk (1U << HOSTBASE_HOST_CPU_WAKEUP_CORE2_WAKEUP_Pos)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE3_WAKEUP_Pos (3U)
+#define HOSTBASE_HOST_CPU_WAKEUP_CORE3_WAKEUP_Msk (1U << HOSTBASE_HOST_CPU_WAKEUP_CORE3_WAKEUP_Pos)
+
+/* EXT_SYS{0-1}_RST_CTRL register bit fields */
+#define HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Pos (0U)
+#define HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Msk (1U << HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Pos)
+#define HOSTBASE_EXT_SYS_RST_CTRL_RST_REQ_Pos (1U)
+#define HOSTBASE_EXT_SYS_RST_CTRL_RST_REQ_Msk (1U << HOSTBASE_EXT_SYS_RST_CTRL_RST_REQ_Pos)
+
+/* EXT_SYS{0-1}_RST_ST register bit fields */
+#define HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Pos      (1U)
+#define HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Msk      (3U << HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Pos)
+#define HOSTBASE_EXT_SYS_RST_ST_RST_ACK_NONE     (0U << HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Pos)
+#define HOSTBASE_EXT_SYS_RST_ST_RST_ACK_UNABLE   (1U << HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Pos)
+#define HOSTBASE_EXT_SYS_RST_ST_RST_ACK_COMPLETE (2U << HOSTBASE_EXT_SYS_RST_ST_RST_ACK_Pos)
+
+/* BSYS_PWR_REQ register bit fields */
+#define HOSTBASE_BSYS_PWR_REQ_WAKEUP_EN_Pos           (0U)
+#define HOSTBASE_BSYS_PWR_REQ_WAKEUP_EN_Msk           (1U << HOSTBASE_BSYS_PWR_REQ_WAKEUP_EN_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_REFCLK_REQ_Pos          (1U)
+#define HOSTBASE_BSYS_PWR_REQ_REFCLK_REQ_Msk          (1U << HOSTBASE_BSYS_PWR_REQ_REFCLK_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_DBGTOP_PWR_REQ_Pos      (2U)
+#define HOSTBASE_BSYS_PWR_REQ_DBGTOP_PWR_REQ_Msk      (1U << HOSTBASE_BSYS_PWR_REQ_DBGTOP_PWR_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos      (3U)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Msk      (7U << HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_OFF      (0U << HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_MEM_RET  (1U << HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_FUNC_RET (2U << HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos)
+#define HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_ON       (4U << HOSTBASE_BSYS_PWR_REQ_SYSTOP_PWR_REQ_Pos)
+
+/* BSYS_PWR_ST register bit fields */
+#define HOSTBASE_BSYS_PWR_ST_DBGTOP_PWR_ST_Pos      (2U)
+#define HOSTBASE_BSYS_PWR_ST_DBGTOP_PWR_ST_Msk      (1U << HOSTBASE_BSYS_PWR_ST_DBGTOP_PWR_ST_Pos)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos      (3U)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Msk      (7U << HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_OFF      (0U << HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_MEM_RET  (1U << HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_FUNC_RET (2U << HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos)
+#define HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_ON       (4U << HOSTBASE_BSYS_PWR_ST_SYSTOP_PWR_ST_Pos)
+
+/* CLKFORCE_ST register bit fields */
+#define HOSTBASE_CLKFORCE_ST_GICCLK_FORCE_ST_Pos  (1U)
+#define HOSTBASE_CLKFORCE_ST_GICCLK_FORCE_ST_Msk  (1U << HOSTBASE_CLKFORCE_ST_GICCLK_FORCE_ST_Pos)
+#define HOSTBASE_CLKFORCE_ST_ACLK_FORCE_ST_Pos    (2U)
+#define HOSTBASE_CLKFORCE_ST_ACLK_FORCE_ST_Msk    (1U << HOSTBASE_CLKFORCE_ST_ACLK_FORCE_ST_Pos)
+#define HOSTBASE_CLKFORCE_ST_CTRLCLK_FORCE_ST_Pos (3U)
+#define HOSTBASE_CLKFORCE_ST_CTRLCLK_FORCE_ST_Msk (1U << HOSTBASE_CLKFORCE_ST_CTRLCLK_FORCE_ST_Pos)
+#define HOSTBASE_CLKFORCE_ST_DBGCLK_FORCE_ST_Pos  (4U)
+#define HOSTBASE_CLKFORCE_ST_DBGCLK_FORCE_ST_Msk  (1U << HOSTBASE_CLKFORCE_ST_DBGCLK_FORCE_ST_Pos)
+#define HOSTBASE_CLKFORCE_ST_REFCLK_FORCE_ST_Pos  (6U)
+#define HOSTBASE_CLKFORCE_ST_REFCLK_FORCE_ST_Msk  (1U << HOSTBASE_CLKFORCE_ST_REFCLK_FORCE_ST_Pos)
+
+/* CLKFORCE_SET register bit fields */
+#define HOSTBASE_CLKFORCE_SET_GICCLK_FORCE_SET_Pos  (1U)
+#define HOSTBASE_CLKFORCE_SET_GICCLK_FORCE_SET_Msk  (1U << HOSTBASE_CLKFORCE_SET_GICCLK_FORCE_SET_Pos)
+#define HOSTBASE_CLKFORCE_SET_ACLK_FORCE_SET_Pos    (2U)
+#define HOSTBASE_CLKFORCE_SET_ACLK_FORCE_SET_Msk    (1U << HOSTBASE_CLKFORCE_SET_ACLK_FORCE_SET_Pos)
+#define HOSTBASE_CLKFORCE_SET_CTRLCLK_FORCE_SET_Pos (3U)
+#define HOSTBASE_CLKFORCE_SET_CTRLCLK_FORCE_SET_Msk (1U << HOSTBASE_CLKFORCE_SET_CTRLCLK_FORCE_SET_Pos)
+#define HOSTBASE_CLKFORCE_SET_DBGCLK_FORCE_SET_Pos  (4U)
+#define HOSTBASE_CLKFORCE_SET_DBGCLK_FORCE_SET_Msk  (1U << HOSTBASE_CLKFORCE_SET_DBGCLK_FORCE_SET_Pos)
+#define HOSTBASE_CLKFORCE_SET_REFCLK_FORCE_SET_Pos  (6U)
+#define HOSTBASE_CLKFORCE_SET_REFCLK_FORCE_SET_Msk  (1U << HOSTBASE_CLKFORCE_SET_REFCLK_FORCE_SET_Pos)
+
+/* CLKFORCE_CLR register bit fields */
+#define HOSTBASE_CLKFORCE_CLR_GICCLK_FORCE_CLR_Pos  (1U)
+#define HOSTBASE_CLKFORCE_CLR_GICCLK_FORCE_CLR_Msk  (1U << HOSTBASE_CLKFORCE_CLR_GICCLK_FORCE_CLR_Pos)
+#define HOSTBASE_CLKFORCE_CLR_ACLK_FORCE_CLR_Pos    (2U)
+#define HOSTBASE_CLKFORCE_CLR_ACLK_FORCE_CLR_Msk    (1U << HOSTBASE_CLKFORCE_CLR_ACLK_FORCE_CLR_Pos)
+#define HOSTBASE_CLKFORCE_CLR_CTRLCLK_FORCE_CLR_Pos (3U)
+#define HOSTBASE_CLKFORCE_CLR_CTRLCLK_FORCE_CLR_Msk (1U << HOSTBASE_CLKFORCE_CLR_CTRLCLK_FORCE_CLR_Pos)
+#define HOSTBASE_CLKFORCE_CLR_DBGCLK_FORCE_CLR_Pos  (4U)
+#define HOSTBASE_CLKFORCE_CLR_DBGCLK_FORCE_CLR_Msk  (1U << HOSTBASE_CLKFORCE_CLR_DBGCLK_FORCE_CLR_Pos)
+#define HOSTBASE_CLKFORCE_CLR_REFCLK_FORCE_CLR_Pos  (6U)
+#define HOSTBASE_CLKFORCE_CLR_REFCLK_FORCE_CLR_Msk  (1U << HOSTBASE_CLKFORCE_CLR_REFCLK_FORCE_CLR_Pos)
+
+#define HOSTBASE ((HOSTBASE_Type *)HOSTBASE_BASE)

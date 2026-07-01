@@ -13,14 +13,16 @@ int32_t pm_soc_reset_rtss_hp(uint32_t vtor_address)
     AONSEC->CM55_HP_SE_VTOR = vtor_address;
 
     /* apply reset & M55 CPUWAIT */
-    HOSTBASE->EXT_SYS0_RST_CTRL = 3;
+    HOSTBASE->EXT_SYS0_RST_CTRL = HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Msk |
+                                HOSTBASE_EXT_SYS_RST_CTRL_RST_REQ_Msk;
 
     /* wait for reset acknowledge */
     uint32_t timeout = 1000;
-    while ((HOSTBASE->EXT_SYS0_RST_ST != 4) && (timeout-- > 0));
+    while ((HOSTBASE->EXT_SYS0_RST_ST != HOSTBASE_EXT_SYS_RST_ST_RST_ACK_COMPLETE)
+        && (timeout-- > 0));
 
     /* release reset, but keep M55 CPUWAIT */
-    HOSTBASE->EXT_SYS0_RST_CTRL = 1;
+    HOSTBASE->EXT_SYS0_RST_CTRL = HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Msk;
 
     return timeout == 0 ? -1 : 0;
 #else
@@ -35,14 +37,16 @@ int32_t pm_soc_reset_rtss_he(uint32_t vtor_address)
     VBATSEC->CM55_HE_SE_VTOR = vtor_address;
 
     /* apply reset & M55 CPUWAIT */
-    HOSTBASE->EXT_SYS1_RST_CTRL = 3;
+    HOSTBASE->EXT_SYS1_RST_CTRL = HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Msk |
+                                HOSTBASE_EXT_SYS_RST_CTRL_RST_REQ_Msk;
 
     /* wait for reset acknowledge */
     uint32_t timeout = 1000;
-    while ((HOSTBASE->EXT_SYS1_RST_ST != 4) && (timeout-- > 0));
+    while ((HOSTBASE->EXT_SYS1_RST_ST != HOSTBASE_EXT_SYS_RST_ST_RST_ACK_COMPLETE)
+        && (timeout-- > 0));
 
     /* release reset, but keep M55 CPUWAIT */
-    HOSTBASE->EXT_SYS1_RST_CTRL = 1;
+    HOSTBASE->EXT_SYS1_RST_CTRL = HOSTBASE_EXT_SYS_RST_CTRL_CPUWAIT_Msk;
 
     return timeout == 0 ? -1 : 0;
 }
