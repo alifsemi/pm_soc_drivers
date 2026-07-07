@@ -5,73 +5,73 @@
 
 typedef struct
 {
-    volatile uint32_t CLUSTER_CONFIG;
-    volatile const uint32_t reserved1[3];
-    volatile uint32_t PE0_CONFIG;
-    volatile uint32_t PE0_RVBARADDR_LW;
-    volatile const uint32_t PE0_RVBARADDR_UP;
-    volatile const uint32_t reserved_PE0;
-    volatile uint32_t PE1_CONFIG;
-    volatile uint32_t PE1_RVBARADDR_LW;
-    volatile const uint32_t PE1_RVBARADDR_UP;
-    volatile const uint32_t reserved_PE1;
-    volatile uint32_t PE2_CONFIG;
-    volatile uint32_t PE2_RVBARADDR_LW;
-    volatile const uint32_t PE2_RVBARADDR_UP;
-    volatile const uint32_t reserved_PE2;
-    volatile uint32_t PE3_CONFIG;
-    volatile uint32_t PE3_RVBARADDR_LW;
-    volatile const uint32_t PE3_RVBARADDR_UP;
-    volatile const uint32_t reserved_PE3;
-    volatile const uint32_t reserved2[108];
-    volatile const uint32_t HOST_RST_SYN;
-    volatile const uint32_t reserved3[63];
-    volatile uint32_t HOST_CPU_BOOT_MSK;
-    volatile uint32_t HOST_CPU_CLUS_PWR_REQ;
-    volatile uint32_t HOST_CPU_WAKEUP;
-    volatile const uint32_t reserved4;
-    volatile uint32_t EXT_SYS0_RST_CTRL;
-    volatile const uint32_t EXT_SYS0_RST_ST;
-    volatile uint32_t EXT_SYS1_RST_CTRL;
-    volatile const uint32_t EXT_SYS1_RST_ST;
-    volatile const uint32_t reserved5[56];
-    volatile uint32_t BSYS_PWR_REQ;
-    volatile const uint32_t BSYS_PWR_ST;
-    volatile const uint32_t reserved6[62];
-    volatile const uint32_t HOST_SYS_LCTRL_ST;
-    volatile uint32_t HOST_SYS_LCTRL_SET;
-    volatile uint32_t HOST_SYS_LCTRL_CLR;
-    volatile const uint32_t reserved7[189];
-    volatile uint32_t HOSTCPUCLK_CTRL;
-    volatile uint32_t HOSTCPUCLK_DIV0;
-    volatile uint32_t HOSTCPUCLK_DIV1;
-    volatile const uint32_t reserved8;
-    volatile uint32_t GICCLK_CTRL;
-    volatile uint32_t GICCLK_DIV0;
-    volatile const uint32_t reserved9[2];
-    volatile uint32_t ACLK_CTRL;
-    volatile uint32_t ACLK_DIV0;
-    volatile const uint32_t reserved10[2];
-    volatile uint32_t CTRLCLK_CTRL;
-    volatile uint32_t CTRLCLK_DIV0;
-    volatile const uint32_t reserved11[2];
-    volatile uint32_t DBGCLK_CTRL;
-    volatile uint32_t DBGCLK_DIV0;
-    volatile const uint32_t reserved12[2];
-    volatile uint32_t HOSTUARTCLK_CTRL;
-    volatile uint32_t HOSTUARTCLK_DIV0;
-    volatile const uint32_t reserved13[2];
-    volatile uint32_t REFCLK_CTRL;
-    volatile const uint32_t reserved14[103];
-    volatile const uint32_t CLKFORCE_ST;
-    volatile uint32_t CLKFORCE_SET;
-    volatile uint32_t CLKFORCE_CLR;
-    volatile const uint32_t reserved15;
-    volatile const uint32_t PLL_ST;
-    volatile const uint32_t reserved16[59];
-    volatile const uint32_t HOST_PPU_INT_ST;
-    volatile const uint32_t reserved17[307];
-    volatile const uint32_t PERIPHERAL_ID[12];
+    volatile uint32_t CLUSTER_CONFIG;          /* 0x000 */
+    volatile const uint32_t reserved1[3];      /* 0x004-0x00C */
+    volatile uint32_t PE0_CONFIG;              /* 0x010 */
+    volatile uint32_t PE0_RVBARADDR_LW;        /* 0x014 */
+    volatile const uint32_t PE0_RVBARADDR_UP;  /* 0x018 */
+    volatile const uint32_t reserved_PE0;      /* 0x01C */
+    volatile uint32_t PE1_CONFIG;              /* 0x020 */
+    volatile uint32_t PE1_RVBARADDR_LW;        /* 0x024 */
+    volatile const uint32_t PE1_RVBARADDR_UP;  /* 0x028 */
+    volatile const uint32_t reserved_PE1;      /* 0x02C */
+    volatile uint32_t PE2_CONFIG;              /* 0x030 */
+    volatile uint32_t PE2_RVBARADDR_LW;        /* 0x034 */
+    volatile const uint32_t PE2_RVBARADDR_UP;  /* 0x038 */
+    volatile const uint32_t reserved_PE2;      /* 0x03C */
+    volatile uint32_t PE3_CONFIG;              /* 0x040 */
+    volatile uint32_t PE3_RVBARADDR_LW;        /* 0x044 */
+    volatile const uint32_t PE3_RVBARADDR_UP;  /* 0x048 */
+    volatile const uint32_t reserved_PE3;      /* 0x04C */
+    volatile const uint32_t reserved2[108];    /* 0x050-0x1FC */
+    volatile const uint32_t HOST_RST_SYN;      /* 0x200 */
+    volatile const uint32_t reserved3[63];     /* 0x204-0x2FC */
+    volatile uint32_t HOST_CPU_BOOT_MSK;       /* 0x300 */
+    volatile uint32_t HOST_CPU_CLUS_PWR_REQ;   /* 0x304 */
+    volatile uint32_t HOST_CPU_WAKEUP;         /* 0x308 */
+    volatile const uint32_t reserved4;         /* 0x30C */
+    volatile uint32_t EXT_SYS0_RST_CTRL;       /* 0x310 */
+    volatile const uint32_t EXT_SYS0_RST_ST;   /* 0x314 */
+    volatile uint32_t EXT_SYS1_RST_CTRL;       /* 0x318 */
+    volatile const uint32_t EXT_SYS1_RST_ST;   /* 0x31C */
+    volatile const uint32_t reserved5[56];     /* 0x320-0x3FC */
+    volatile uint32_t BSYS_PWR_REQ;            /* 0x400 */
+    volatile const uint32_t BSYS_PWR_ST;       /* 0x404 */
+    volatile const uint32_t reserved6[62];     /* 0x408-0x4FC */
+    volatile const uint32_t HOST_SYS_LCTRL_ST; /* 0x500 */
+    volatile uint32_t HOST_SYS_LCTRL_SET;      /* 0x504 */
+    volatile uint32_t HOST_SYS_LCTRL_CLR;      /* 0x508 */
+    volatile const uint32_t reserved7[189];    /* 0x50C-0x7FC */
+    volatile uint32_t HOSTCPUCLK_CTRL;         /* 0x800 */
+    volatile uint32_t HOSTCPUCLK_DIV0;         /* 0x804 */
+    volatile uint32_t HOSTCPUCLK_DIV1;         /* 0x808 */
+    volatile const uint32_t reserved8;         /* 0x80C */
+    volatile uint32_t GICCLK_CTRL;             /* 0x810 */
+    volatile uint32_t GICCLK_DIV0;             /* 0x814 */
+    volatile const uint32_t reserved9[2];      /* 0x818-0x81C */
+    volatile uint32_t ACLK_CTRL;               /* 0x820 */
+    volatile uint32_t ACLK_DIV0;               /* 0x824 */
+    volatile const uint32_t reserved10[2];     /* 0x828-0x82C */
+    volatile uint32_t CTRLCLK_CTRL;            /* 0x830 */
+    volatile uint32_t CTRLCLK_DIV0;            /* 0x834 */
+    volatile const uint32_t reserved11[2];     /* 0x838-0x83C */
+    volatile uint32_t DBGCLK_CTRL;             /* 0x840 */
+    volatile uint32_t DBGCLK_DIV0;             /* 0x844 */
+    volatile const uint32_t reserved12[2];     /* 0x848-0x84C */
+    volatile uint32_t HOSTUARTCLK_CTRL;        /* 0x850 */
+    volatile uint32_t HOSTUARTCLK_DIV0;        /* 0x854 */
+    volatile const uint32_t reserved13[2];     /* 0x858-0x85C */
+    volatile uint32_t REFCLK_CTRL;             /* 0x860 */
+    volatile const uint32_t reserved14[103];   /* 0x864-0x9FC */
+    volatile const uint32_t CLKFORCE_ST;       /* 0xA00 */
+    volatile uint32_t CLKFORCE_SET;            /* 0xA04 */
+    volatile uint32_t CLKFORCE_CLR;            /* 0xA08 */
+    volatile const uint32_t reserved15;        /* 0xA0C */
+    volatile const uint32_t PLL_ST;            /* 0xA10 */
+    volatile const uint32_t reserved16[59];    /* 0xA14-0xAFC */
+    volatile const uint32_t HOST_PPU_INT_ST;   /* 0xB00 */
+    volatile const uint32_t reserved17[307];   /* 0xB04-0xFCC */
+    volatile const uint32_t PERIPHERAL_ID[12]; /* 0xFD0-0xFFC */
 } HOSTBASE_Type;
 
 /* HOST_CPU_CLUS_PWR_REQ register bit fields */
