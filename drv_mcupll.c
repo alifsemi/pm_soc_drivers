@@ -5,21 +5,26 @@
 /* for sys_busy_loop_us() function */
 #include "sys_utils.h"
 
+#define ENABLE_XTAL_DELAY_TIME_US     600
+#define ENABLE_PLL_PRE_DELAY_TIME_US  15
+#define ENABLE_PLL_POST_DELAY_TIME_US 45
+
 static void OSC_xtal_start(bool faststart, bool boost)
 {
-    if ((AONSEC->XO_REG1 & 1) == 1) return;
+    if ((AONSEC->XO_REG1 & AONSEC_XO_REG1_EN_XTAL_Msk) == 1) return;
 
     /* Enable bandgap */
-    AONALL->ANATOP_REG1 = 0x11;
+    AONALL->ANATOP_REG1 = AONALL_ANATOP_REG1_HFXTAL_BG_ENA_Msk | \
+                          AONALL_ANATOP_REG1_HFXTAL_VREF_CTRL_DEFAULT;
 
     uint32_t xo_reg1_default = 0x11D08439;
     uint32_t val = xo_reg1_default;
-    if (faststart)  val |= 1U << 1;
-    if (boost)      val |= 1U << 6;
+    if (faststart)  val |= AONSEC_XO_REG1_FASTSTART_Msk;
+    if (boost)      val |= AONSEC_XO_REG1_BOOST_Msk;
 
     /* Enable HFXO */
     AONSEC->XO_REG1 = val;
-    sys_busy_loop_us(600);
+    sys_busy_loop_us(ENABLE_XTAL_DELAY_TIME_US);
 
     AONSEC->XO_REG1 = xo_reg1_default;
 }
@@ -77,12 +82,12 @@ static void PLL_clkpll_start_e3(uint32_t xtal_freq, bool faststart)
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
     AONSEC->MCUPLL_REG3 = 0x28018000;
-    sys_busy_loop_us(15);
+    sys_busy_loop_us(ENABLE_PLL_PRE_DELAY_TIME_US);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    sys_busy_loop_us(45);
+    sys_busy_loop_us(ENABLE_PLL_POST_DELAY_TIME_US);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -149,12 +154,12 @@ static void PLL_clkpll_start_e1c(uint32_t xtal_freq, bool faststart)
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
     AONSEC->MCUPLL_REG3 = 0x08024000;
-    sys_busy_loop_us(15);
+    sys_busy_loop_us(ENABLE_PLL_PRE_DELAY_TIME_US);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    sys_busy_loop_us(45);
+    sys_busy_loop_us(ENABLE_PLL_POST_DELAY_TIME_US);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -217,12 +222,12 @@ static void PLL_clkpll_start_e4(uint32_t xtal_freq, bool faststart)
     AONSEC->MCUPLL_REG1 = reg1_val;
     AONSEC->MCUPLL_REG2 = reg2_val;
     AONSEC->MCUPLL_REG3 = 0x08038000;
-    sys_busy_loop_us(15);
+    sys_busy_loop_us(ENABLE_PLL_PRE_DELAY_TIME_US);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->MCUPLL_REG1 = reg1_val;
-    sys_busy_loop_us(45);
+    sys_busy_loop_us(ENABLE_PLL_POST_DELAY_TIME_US);
 
     /* clear fast start bit if needed */
     if (faststart) {
@@ -242,7 +247,7 @@ static void PLL_clkpll_start(uint32_t xtal_freq, bool faststart)
 {
     /* check PLL LOCK bit */
     if ((CGU->PLL_LOCK_CTRL & 1) == 1) return;
-    if ((AONSEC->XO_REG1 & 1) == 0) return;
+    if ((AONSEC->XO_REG1 & AONSEC_XO_REG1_EN_XTAL_Msk) == 0) return;
 
 #if defined(ENSEMBLE_SOC_GEN2)
     PLL_clkpll_start_e4(xtal_freq, faststart);
@@ -265,7 +270,7 @@ static void PLL_clkpll_stop()
 
 bool OSC_enabled()
 {
-    return ((AONSEC->XO_REG1 & 1) == 1);
+    return ((AONSEC->XO_REG1 & AONSEC_XO_REG1_EN_XTAL_Msk) == 1);
 }
 
 /* be sure to update the SystemREFClock variable */

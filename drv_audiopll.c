@@ -6,6 +6,9 @@
 /* for sys_busy_loop_us() function */
 #include "sys_utils.h"
 
+#define ENABLE_PLL_PRE_DELAY_TIME_US  15
+#define ENABLE_PLL_POST_DELAY_TIME_US 45
+
 bool AUDIOPLL_enabled()
 {
     /* check if the PLL reset is released */
@@ -16,7 +19,7 @@ static void AUDIOPLL_clkpll_start(uint32_t xtal_freq, bool faststart)
 {
     /* check PLL LOCK bit */
     if (AUDIOPLL_enabled()) return;
-    if ((AONSEC->XO_REG1 & 1) == 0) return;
+    if ((AONSEC->XO_REG1 & AONSEC_XO_REG1_EN_XTAL_Msk) == 0) return;
 
     /* reg1_val = integer | (fractional) */
     uint32_t reg1_val = 0;
@@ -63,12 +66,12 @@ static void AUDIOPLL_clkpll_start(uint32_t xtal_freq, bool faststart)
     AONSEC->AUDIOPLL_REG1 = reg1_val;
     AONSEC->AUDIOPLL_REG2 = reg2_val;
     AONSEC->AUDIOPLL_REG3 = 0x08024000;
-    sys_busy_loop_us(15);
+    sys_busy_loop_us(ENABLE_PLL_PRE_DELAY_TIME_US);
 
     /* release reset to PLL, wait to settle */
     reg1_val |=  (1U << 31);
     AONSEC->AUDIOPLL_REG1 = reg1_val;
-    sys_busy_loop_us(45);
+    sys_busy_loop_us(ENABLE_PLL_POST_DELAY_TIME_US);
 
     /* clear fast start bit if needed */
     if (faststart) {

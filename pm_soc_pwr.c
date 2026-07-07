@@ -10,6 +10,8 @@
 /* for CGU_Type */
 #include "soc.h"
 
+#define PD6_ENABLE_SRAM_DELAY_TIME_US 60
+
 static uint32_t dcdc_default_trim = 0;
 
 void pm_soc_set_dcdc_pfm(void) {
@@ -107,7 +109,7 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 
     /* TBD - replace with "BISR Done" Status */
     if (sram_select) {
-        sys_busy_loop_us(60);
+        sys_busy_loop_us(PD6_ENABLE_SRAM_DELAY_TIME_US);
     }
 #endif
 }
@@ -193,7 +195,7 @@ void pm_soc_enable_pd_sram_aon(uint32_t retention_select)
 
     /* Enable Main SRAM Retention LDO
      * Note: shared between SE, HE, PD4 SRAMs */
-    VBATSEC->VBAT_ANA_REG1 |= (1U << 10);
+    VBATSEC->VBAT_ANA_REG1 |= (VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk);
 
     /* Enable PD4 SRAM Retention (optional) */
     uint32_t mask = VBATPD4_RET_CTRL_SRAM_RET1_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET1_MASK_Msk | \
@@ -209,7 +211,7 @@ void pm_soc_enable_pd_sram_aon(uint32_t retention_select)
     VBATPD4->PWR_CTRL = VBATPD4_PWR_CTRL_PPU_BYPASS_Msk;
 
     /* PD4 PWR STAT Value */
-    while((AONSEC->PD4_PWR_STAT & 0x7FFUL) == 0);
+    while((AONSEC->PD4_PWR_STAT & AONSEC_PD4_PWR_STAT_Msk) == AONSEC_PD4_PWR_STAT_PWR_OFF);
 #endif
 }
 
@@ -229,7 +231,7 @@ void pm_soc_disable_pd_sram_aon()
     VBATPD4->RET_CTRL = mask;
 
     /* PD4 PWR STAT Value */
-    while((AONSEC->PD4_PWR_STAT & 0x7FFUL) != 0);
+    while((AONSEC->PD4_PWR_STAT & AONSEC_PD4_PWR_STAT_Msk) != AONSEC_PD4_PWR_STAT_PWR_OFF);
 #endif
 }
 
@@ -239,14 +241,14 @@ void pm_soc_enable_pd4_sram(uint32_t clk_sel)
     return; /* not applicable for these families */
 #else
     /* Switch PD4 between HFXO and PLL-160M clock */
-    AONSEC->PD4_CLK_SEL = clk_sel ? 3 : 0;
-    AONSEC->PD4_CLK_PLL = clk_sel ? 1 : 0;
+    AONSEC->PD4_CLK_SEL = clk_sel ? AONSEC_PD4_CLK_SEL_Msk : 0;
+    AONSEC->PD4_CLK_PLL = clk_sel ? AONSEC_PD4_CLK_PLL_Msk : 0;
 
     /* Enable PD4 */
-    AONSEC->PD4_PWR_CTRL |= (1U << 12);
+    AONSEC->PD4_PWR_CTRL |= (AONSEC_PD4_PWR_CTRL_Msk);
 
     /* PD4 PWR STAT Value */
-    while((AONSEC->PD4_PWR_STAT & 0x7FFUL) != 0x100);
+    while((AONSEC->PD4_PWR_STAT & AONSEC_PD4_PWR_STAT_Msk) != AONSEC_PD4_PWR_STAT_PWR_ON);
 #endif
 }
 
@@ -256,9 +258,9 @@ void pm_soc_disable_pd4_sram()
     return; /* not applicable for these families */
 #else
     /* Disable PD4 */
-    AONSEC->PD4_PWR_CTRL &= ~(1U << 12);
+    AONSEC->PD4_PWR_CTRL &= ~(AONSEC_PD4_PWR_CTRL_Msk);
 
     /* PD4 PWR STAT Value */
-    while((AONSEC->PD4_PWR_STAT & 0x7FFUL) == 0x100);
+    while((AONSEC->PD4_PWR_STAT & AONSEC_PD4_PWR_STAT_Msk) == AONSEC_PD4_PWR_STAT_PWR_ON);
 #endif
 }

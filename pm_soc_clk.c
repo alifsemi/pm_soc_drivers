@@ -22,34 +22,36 @@ uint32_t CoreID()
   SoC Clock divider functions
  *----------------------------------------------------------------------------*/
 static uint32_t GetDividerActiveHFRC() {
-    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 & VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Msk) >> VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Pos;
+    uint32_t shift_val = VBATSEC->VBAT_ANA_REG2;
+    shift_val &= VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Msk;
+    shift_val >>= VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Pos;
+
     return shift_val;
 }
 
 static uint32_t GetDividerStandbyHFRC() {
-    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 & VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Msk) >> VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Pos;
+    uint32_t shift_val = VBATSEC->VBAT_ANA_REG2;
+    shift_val &= VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Msk;
+    shift_val >>= VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Pos;
 
-    if (shift_val > 6) shift_val += 3;          // 2^(7   + 3) = 1024 (75k)
-    else if (shift_val > 3) shift_val += 2;     // 2^(4-6 + 2) = 64-256 (1.2M-300k)
-    else if (shift_val > 2) shift_val += 1;     // 2^(3   + 1) = 16 (4.8M)
-                                                // 2^(0-2 + 0) = 1-4 (76.8M-19.2M)
+    if (shift_val > 6) shift_val += 3;      // 2^(7   + 3) = 1024 (75k)
+    else if (shift_val > 3) shift_val += 2; // 2^(4-6 + 2) = 64-256 (1.2M-300k)
+    else if (shift_val > 2) shift_val += 1; // 2^(3   + 1) = 16 (4.8M)
+                                            // 2^(0-2 + 0) = 1-4 (76.8M-19.2M)
     return shift_val;
 }
 
 static uint32_t GetDividerActiveHFXO() {
-    uint32_t shift_val;
-#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
-    shift_val = ((AONALL->MISC_REG1 >> 17) & 15U);
-#else
-    shift_val = ((AONALL->MISC_REG1 >> 13) & 15U);
-#endif
+    uint32_t shift_val = AONALL->MISC_REG1;
+    shift_val &= AONALL_MISC_REG1_HFXTAL_DIVISOR_Msk;
+    shift_val >>= AONALL_MISC_REG1_HFXTAL_DIVISOR_Pos;
 
     if (shift_val > 7) {
         shift_val -= 8;
-        if (shift_val > 6) shift_val += 3;          // 2^(7   + 3) = 1024 (37.5k)
-        else if (shift_val > 3) shift_val += 2;     // 2^(4-6 + 2) = 64-256 (600k-150k)
-        else if (shift_val > 2) shift_val += 1;     // 2^(3   + 1) = 16 (2.4M)
-                                                    // 2^(0-2 + 0) = 1-4 (38.4M-9.6M)
+        if (shift_val > 6) shift_val += 3;      // 2^(7   + 3) = 1024 (37.5k)
+        else if (shift_val > 3) shift_val += 2; // 2^(4-6 + 2) = 64-256 (600k-150k)
+        else if (shift_val > 2) shift_val += 1; // 2^(3   + 1) = 16 (2.4M)
+                                                // 2^(0-2 + 0) = 1-4 (38.4M-9.6M)
     }
     return shift_val;
 }
@@ -191,8 +193,9 @@ uint32_t pm_soc_clk_get_axiclk()
  *----------------------------------------------------------------------------*/
 uint32_t pm_soc_clk_get_ahbclk()
 {
-    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
-    uint8_t hclk_div = (syst_clkdiv >> 8) & 3;
+    uint32_t hclk_div = AONALL->SYSTOP_CLK_DIV;
+    hclk_div &= AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Msk;
+    hclk_div >>= AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Pos;
     hclk_div = hclk_div > 2 ? 2 : hclk_div;
 
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
@@ -211,8 +214,9 @@ uint32_t pm_soc_clk_get_ahbclk()
  *----------------------------------------------------------------------------*/
 uint32_t pm_soc_clk_get_apbclk()
 {
-    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
-    uint8_t pclk_div = syst_clkdiv & 3;
+    uint32_t pclk_div = AONALL->SYSTOP_CLK_DIV;
+    pclk_div &= AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Msk;
+    pclk_div >>= AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Pos;
     pclk_div = pclk_div > 2 ? 2 : pclk_div;
 
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
@@ -233,9 +237,14 @@ uint32_t pm_soc_clk_get_busclk()
 {
     pm_soc_clk_get_axiclk();
 
-    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV & 0x303;
-    uint8_t hclk_div = (syst_clkdiv >> 8) & 3;
-    uint8_t pclk_div = syst_clkdiv & 3;
+    uint32_t syst_clkdiv = AONALL->SYSTOP_CLK_DIV;
+    uint32_t pclk_div = syst_clkdiv;
+    pclk_div &= AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Msk;
+    pclk_div >>= AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Pos;
+
+    uint32_t hclk_div = syst_clkdiv;
+    hclk_div &= AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Msk;
+    hclk_div >>= AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Pos;
 
     hclk_div = hclk_div > 2 ? 2 : hclk_div;
     pclk_div = pclk_div > 2 ? 2 : pclk_div;
@@ -289,27 +298,8 @@ int32_t pm_soc_clk_set_hfxo_div(uint32_t div_xtal)
     if (div_xtal > 7) return -1;
 
     uint32_t reg_data = AONALL->MISC_REG1;
-#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
-    /* MISC_REG1 Register (0x1A604030)
-     *
-     * cont_clkDiv[19:17]
-     *      HF XTAL is divided by 2^x, where x = 0 to 7
-     * sel_clkDivHi[20]
-     *      simply should be set to 0
-     */
-    reg_data &= ~(15 << 17);
-    reg_data |= (div_xtal << 17);
-#else
-    /* MISC_REG1 Register (0x1A604030)
-     *
-     * cont_clkDiv[15:13]
-     *      HF XTAL is divided by 2^x, where x = 0 to 7
-     * sel_clkDivHi[16]
-     *      simply should be set to 0
-     */
-    reg_data &= ~(15 << 13);
-    reg_data |= (div_xtal << 13);
-#endif
+    reg_data &= ~(AONALL_MISC_REG1_HFXTAL_DIVISOR_Msk);
+    reg_data |= (div_xtal << AONALL_MISC_REG1_HFXTAL_DIVISOR_Pos);
     AONALL->MISC_REG1 = reg_data;
 
     return 0;
@@ -381,9 +371,12 @@ int32_t pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hc
     HOSTBASE->ACLK_DIV0 = aclk_div;
 
     /* Refer to "SYSTOP_CLK_DIV Register" in the HWRM */
+    uint32_t mask = AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Msk | \
+                    AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Msk;
     uint32_t reg_data = AONALL->SYSTOP_CLK_DIV;
-    reg_data &= ~(0x303);
-    reg_data |=  (0x303 & (hclk_div << 8 | pclk_div));
+    reg_data &= ~(mask);
+    reg_data |= (pclk_div << AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Pos);
+    reg_data |= (hclk_div << AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Pos)
     AONALL->SYSTOP_CLK_DIV = reg_data;
 
     return 0;
