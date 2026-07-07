@@ -79,7 +79,7 @@ void pm_soc_set_dcdc_pfm(void);
 void pm_soc_set_dcdc_pwm(void);
 
 /**
-  @fn       void pm_soc_set_dcdc_default_trim(uint32_t trim_val)
+  @fn       void pm_soc_set_dcdc_default_trim(int32_t trim_val)
   @brief    Record the DCDC trim value that corresponds to the factory
             default output voltage (typically 825mV). This must be called
             before pm_soc_set_dcdc_voltage(), which uses it as the reference
@@ -87,10 +87,10 @@ void pm_soc_set_dcdc_pwm(void);
   @param    trim_val    Trim code corresponding to the default 825mV output
   @return   None
 */
-void pm_soc_set_dcdc_default_trim(uint32_t trim_val);
+void pm_soc_set_dcdc_default_trim(int32_t trim_val);
 
 /**
-  @fn       void pm_soc_set_dcdc_voltage(uint32_t millivolts)
+  @fn       void pm_soc_set_dcdc_voltage(int32_t millivolts)
   @brief    Adjust the internal DCDC converter output voltage by computing
             a new trim code relative to the stored default trim. The call
             is silently ignored if the target voltage is out of range, if
@@ -102,7 +102,7 @@ void pm_soc_set_dcdc_default_trim(uint32_t trim_val);
                         700 to 850)
   @return   None
 */
-void pm_soc_set_dcdc_voltage(uint32_t millivolts);
+void pm_soc_set_dcdc_voltage(int32_t millivolts);
 
 /* Power & Retention Controls for PD6 SRAMs (retention is optional) */
 
