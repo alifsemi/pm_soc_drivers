@@ -22,12 +22,12 @@ uint32_t CoreID()
   SoC Clock divider functions
  *----------------------------------------------------------------------------*/
 static uint32_t GetDividerActiveHFRC() {
-    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 >> 11) & 7U;
+    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 & VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Msk) >> VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Pos;
     return shift_val;
 }
 
 static uint32_t GetDividerStandbyHFRC() {
-    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 >> 19) & 7U;
+    uint32_t shift_val = (VBATSEC->VBAT_ANA_REG2 & VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Msk) >> VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Pos;
 
     if (shift_val > 6) shift_val += 3;          // 2^(7   + 3) = 1024 (75k)
     else if (shift_val > 3) shift_val += 2;     // 2^(4-6 + 2) = 64-256 (1.2M-300k)
@@ -276,8 +276,8 @@ int32_t pm_soc_clk_set_hfrc_div(uint32_t div_active, uint32_t div_standby)
      */
 
     uint32_t reg_data = VBATSEC->VBAT_ANA_REG2;
-    reg_data &= ~((7U << 11) | (7U << 19));
-    reg_data |= (div_active << 11) | (div_standby << 19);
+    reg_data &= ~(VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Msk | VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Msk);
+    reg_data |= (div_active << VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_ACTIVE_Pos) | (div_standby << VBATSEC_VBAT_ANA_REG2_OSC_DIV_CTRL_STANDBY_Pos);
     VBATSEC->VBAT_ANA_REG2 = reg_data;
 
     return 0;

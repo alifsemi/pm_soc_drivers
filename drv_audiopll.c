@@ -91,7 +91,7 @@ static void AUDIOPLL_clkpll_stop()
 void AUDIOPLL_initialize(uint32_t xtal_freq)
 {
     AUDIOPLL_clkpll_start(xtal_freq, true);
-    VBATSEC2->SEL_AUDIO_PLL = 1;
+    VBATSEC2->SEL_AUDIO_PLL = VBATSEC2_SEL_AUDIO_PLL_Msk;
 }
 
 void AUDIOPLL_uninitialize()

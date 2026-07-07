@@ -1,3 +1,4 @@
+#include "drv_cgu.h"
 #include "soc_aon.h"
 #include "soc_vbat.h"
 #include "soc_hostbase.h"
@@ -15,7 +16,7 @@ void pm_soc_set_dcdc_pfm(void) {
 #if defined(ENSEMBLE_SOC_E1C)
     return; /* not applicable for this family */
 #else
-    VBATSEC->DCDC_REG2 |= (1U << 23);
+    VBATSEC->DCDC_REG2 |= (VBATSEC_DCDC_REG2_DCDC_PFM_EN_Msk);
 #endif
 }
 
@@ -23,7 +24,7 @@ void pm_soc_set_dcdc_pwm(void) {
 #if defined(ENSEMBLE_SOC_E1C)
     return; /* not applicable for this family */
 #else
-    VBATSEC->DCDC_REG2 &= ~(1U << 23);
+    VBATSEC->DCDC_REG2 &= ~(VBATSEC_DCDC_REG2_DCDC_PFM_EN_Msk);
 #endif
 }
 
@@ -54,8 +55,8 @@ void pm_soc_set_dcdc_voltage(uint32_t millivolts) {
     }
 
     uint32_t dcdc_reg1_val = VBATSEC->DCDC_REG1;
-    dcdc_reg1_val &= ~(63U << 3);
-    dcdc_reg1_val |= trim_val << 3;
+    dcdc_reg1_val &= ~(VBATSEC_DCDC_REG1_DCDC_TRIM_VOUT_Msk);
+    dcdc_reg1_val |= trim_val << VBATSEC_DCDC_REG1_DCDC_TRIM_VOUT_Pos;
     VBATSEC->DCDC_REG1 = dcdc_reg1_val;
 #endif
 }
@@ -65,48 +66,41 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 #if defined(ENSEMBLE_SOC_E1C)
     return; /* not applicable for this family */
 #else
-    uint32_t reg_data;
+    uint32_t mask, reg_data;
     reg_data = CGU->CLK_ENA;
 
-#if defined(ENSEMBLE_SOC_GEN2)
-    /* SRAM0 clock enable is bit 27 */
-    if (sram_select & SYST_SRAM0_EN) {
-        reg_data |= (1UL << 27);
+    /* SRAM0 clock enable */
+    if (sram_select & PD6_ENABLE_SRAM0) {
+        reg_data |= (CGU_CLK_ENA_SRAM0);
     } else {
-        reg_data &= ~(1UL << 27);
+        reg_data &= ~(CGU_CLK_ENA_SRAM0);
     }
-#else
-    /* SRAM0 clock enable is bit 24 */
-    if (sram_select & SYST_SRAM0_EN) {
-        reg_data |= (1UL << 24);
-    } else {
-        reg_data &= ~(1UL << 24);
-    }
-#endif
 
-    /* SRAM1 clock enable is bit 28 */
-    if (sram_select & SYST_SRAM1_EN) {
-        reg_data |= (1UL << 28);
+    /* SRAM1 clock enable */
+    if (sram_select & PD6_ENABLE_SRAM1) {
+        reg_data |= (CGU_CLK_ENA_SRAM1);
     } else {
-        reg_data &= ~(1UL << 28);
+        reg_data &= ~(CGU_CLK_ENA_SRAM1);
     }
 
     CGU->CLK_ENA = reg_data;
 
     reg_data = VBATSEC->PWR_CTRL;
 
-    /* SRAM0 power mask is bit 8 */
-    if (sram_select & SYST_SRAM0_EN) {
-        reg_data &= ~(3UL << 8);
+    /* SRAM0 power mask */
+    mask = VBATSEC_PWR_CTRL_SRAM0_ISO_Msk | VBATSEC_PWR_CTRL_SRAM0_PWR_MASK_Msk;
+    if (sram_select & PD6_ENABLE_SRAM0) {
+        reg_data &= ~(mask);
     } else {
-        reg_data |= (3UL << 8);
+        reg_data |= (mask);
     }
 
-    /* SRAM1 power mask is bit 12 */
-    if (sram_select & SYST_SRAM1_EN) {
-        reg_data &= ~(3UL << 12);
+    /* SRAM1 power mask */
+    mask = VBATSEC_PWR_CTRL_SRAM1_ISO_Msk | VBATSEC_PWR_CTRL_SRAM1_PWR_MASK_Msk;
+    if (sram_select & PD6_ENABLE_SRAM1) {
+        reg_data &= ~(mask);
     } else {
-        reg_data |= (3UL << 12);
+        reg_data |= (mask);
     }
 
     VBATSEC->PWR_CTRL = reg_data;
@@ -121,20 +115,25 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 {
 #if defined(ENSEMBLE_SOC_E1C)
-    uint32_t reg_data;
+    uint32_t mask, reg_data;
+    mask = VBATALL_RET_CTRL_HETCM_RET1_EN_Msk | VBATALL_RET_CTRL_HETCM_RET2_EN_Msk | \
+           VBATALL_RET_CTRL_HETCM_RET3_EN_Msk | VBATALL_RET_CTRL_HETCM_RET4_EN_Msk | \
+           VBATALL_RET_CTRL_HETCM_RET5_EN_Msk | VBATALL_RET_CTRL_HETCM_RET6_EN_Msk;
     reg_data = VBATALL->RET_CTRL;
 
     /* HW polarity: 1=retain (matches the macro bits directly) */
-    reg_data &= ~(0x7EU); /* clear retention bits 1..6 (no retention by default) */
-    reg_data |= (retention_select & 0x7EU); /* set bits for TCM blocks to retain */
+    reg_data &= ~(mask); /* clear retention bits 1..6 (no retention by default) */
+    reg_data |= (retention_select & mask); /* set bits for TCM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
 #else
-    uint32_t reg_data;
+    uint32_t mask, reg_data;
+    mask = VBATALL_RET_CTRL_HETCM_RET1_MASK_Msk | VBATALL_RET_CTRL_HETCM_RET1_FORCE_Msk | \
+           VBATALL_RET_CTRL_HETCM_RET2_MASK_Msk | VBATALL_RET_CTRL_HETCM_RET2_FORCE_Msk;
     reg_data = VBATALL->RET_CTRL;
 
     /* HW polarity: 0=retain (function inverts the caller's mask) */
-    reg_data |= 0xF0; /* set retention bits 4..7 (no retention by default) */
-    reg_data &= ~(retention_select & 0xF0); /* clear bits for TCM blocks to retain */
+    reg_data |= mask; /* set retention bits 4..7 (no retention by default) */
+    reg_data &= ~(retention_select & mask); /* clear bits for TCM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
 #endif
 }
@@ -142,12 +141,17 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 void pm_soc_retain_syst_sram(uint32_t retention_select)
 {
 #if defined(ENSEMBLE_SOC_GEN2)
-    uint32_t reg_data;
+    uint32_t mask, reg_data;
+    mask = VBATALL_RET_CTRL_SRAM0_RET1_MASK_Msk | VBATALL_RET_CTRL_SRAM0_RET1_FORCE_Msk | \
+           VBATALL_RET_CTRL_SRAM0_RET2_MASK_Msk | VBATALL_RET_CTRL_SRAM0_RET2_FORCE_Msk | \
+           VBATALL_RET_CTRL_SRAM0_RET3_MASK_Msk | VBATALL_RET_CTRL_SRAM0_RET3_FORCE_Msk | \
+           VBATALL_RET_CTRL_SRAM0_RET4_MASK_Msk | VBATALL_RET_CTRL_SRAM0_RET4_FORCE_Msk | \
+           VBATALL_RET_CTRL_SRAM1_RET_MASK_Msk | VBATALL_RET_CTRL_SRAM1_RET_FORCE_Msk;
     reg_data = VBATALL->RET_CTRL;
 
-    /* when bits are clear, retention is enabled */
-    reg_data |= 0x3FF00; /* set retention bits to 8-17 (no retention by default) */
-    reg_data &= ~(retention_select & 0x3FF00); /* clear bits for SRAM blocks to retain */
+    /* HW polarity: 0=retain (function inverts the caller's mask) */
+    reg_data |= mask; /* set retention bits 8..17 (no retention by default) */
+    reg_data &= ~(retention_select & mask); /* clear bits for SRAM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
 #else
     return; /* only applicable for Ensemble E4/E6/E8 */
@@ -185,20 +189,24 @@ void pm_soc_enable_pd_sram_aon(uint32_t retention_select)
     return; /* not applicable for these families */
 #else
     /* Enable PD1 via VBATSEC PWR_CTRL regiser */
-    VBATSEC->PWR_CTRL |= 1U;
+    VBATSEC->PWR_CTRL |= (VBATSEC_PWR_CTRL_PD1_PWR_CTRL_Msk);
 
     /* Enable Main SRAM Retention LDO
      * Note: shared between SE, HE, PD4 SRAMs */
     VBATSEC->VBAT_ANA_REG1 |= (1U << 10);
 
     /* Enable PD4 SRAM Retention (optional) */
+    uint32_t mask = VBATPD4_RET_CTRL_SRAM_RET1_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET1_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RET2_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET2_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RET3_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET3_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RSVD_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RSVD_MASK_Msk;
     retention_select = ~retention_select;
-    VBATPD4->RET_CTRL = retention_select & 0x3333U;
+    VBATPD4->RET_CTRL = retention_select & mask;
 
     /* Disconnect PPU from M55-M[4] and M55-G[8]
      * Allows PD4 to turn on and off via functions:
      * pm_soc_enable_pd4_sram() / pm_soc_disable_pd4_sram() */
-    VBATPD4->PWR_CTRL  = 0x110U;
+    VBATPD4->PWR_CTRL = VBATPD4_PWR_CTRL_PPU_BYPASS_Msk;
 
     /* PD4 PWR STAT Value */
     while((AONSEC->PD4_PWR_STAT & 0x7FFUL) == 0);
@@ -211,10 +219,14 @@ void pm_soc_disable_pd_sram_aon()
     return; /* not applicable for these families */
 #else
     /* Disable PD1 via VBATSEC PWR_CTRL regiser */
-    VBATSEC->PWR_CTRL &= ~1U;
+    VBATSEC->PWR_CTRL &= ~(VBATSEC_PWR_CTRL_PD1_PWR_CTRL_Msk);
 
     /* Disable PD4 SRAM Retention */
-    VBATPD4->RET_CTRL  = 0x3333U;
+    uint32_t mask = VBATPD4_RET_CTRL_SRAM_RET1_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET1_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RET2_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET2_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RET3_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RET3_MASK_Msk | \
+                    VBATPD4_RET_CTRL_SRAM_RSVD_FORCE_Msk | VBATPD4_RET_CTRL_SRAM_RSVD_MASK_Msk;
+    VBATPD4->RET_CTRL = mask;
 
     /* PD4 PWR STAT Value */
     while((AONSEC->PD4_PWR_STAT & 0x7FFUL) != 0);
