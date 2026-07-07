@@ -145,6 +145,7 @@ static uint32_t SystSyspllUpdate()
     }
 }
 
+#if !(defined(M55_HE) || defined(M55_HP))
 static uint32_t SystCpupllUpdate()
 {
 #if defined(ENSEMBLE_SOC_E1C)
@@ -167,6 +168,7 @@ static uint32_t SystCpupllUpdate()
     }
 #endif
 }
+#endif
 
 /*----------------------------------------------------------------------------
   SYST_ACLK update function
@@ -376,7 +378,7 @@ int32_t pm_soc_clk_set_busclk(uint32_t aclk_ctrl, uint32_t aclk_div, uint32_t hc
     uint32_t reg_data = AONALL->SYSTOP_CLK_DIV;
     reg_data &= ~(mask);
     reg_data |= (pclk_div << AONALL_SYSTOP_CLK_DIV_PCLK_DIVISOR_Pos);
-    reg_data |= (hclk_div << AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Pos)
+    reg_data |= (hclk_div << AONALL_SYSTOP_CLK_DIV_HCLK_DIVISOR_Pos);
     AONALL->SYSTOP_CLK_DIV = reg_data;
 
     return 0;
