@@ -285,9 +285,9 @@ typedef struct
 
 typedef struct
 {
-    volatile uint32_t RET_CTRL; /* 0x00 */
-    volatile const uint32_t RESERVED1;
-    volatile uint32_t PWR_CTRL; /* 0x08 */
+    volatile uint32_t RET_CTRL;        /* 0x00 */
+    volatile const uint32_t RESERVED1; /* 0x04 */
+    volatile uint32_t PWR_CTRL;        /* 0x08 */
 } VBATPD4_Type;
 
 /* RET_CTRL register bit fields */
