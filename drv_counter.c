@@ -17,11 +17,11 @@ uint32_t refclk_cntr_freq() {
 }
 
 uint32_t refclk_cntr_val() {
-    return *((volatile uint32_t *)0x1A200008);
+    return *((volatile uint32_t *)0x1A210000);
 }
 
 uint64_t refclk_cntr_val64() {
-    return *((volatile uint64_t *)0x1A200008);
+    return *((volatile uint64_t *)0x1A210000);
 }
 
 void s32k_cntr_init() {
@@ -30,11 +30,11 @@ void s32k_cntr_init() {
 }
 
 uint32_t s32k_cntr_val() {
-    return *((volatile uint32_t *)0x1A400008);
+    return *((volatile uint32_t *)0x1A410000);
 }
 
 uint64_t s32k_cntr_val64() {
-    return *((volatile uint64_t *)0x1A400008);
+    return *((volatile uint64_t *)0x1A410000);
 }
 
 void delay_ms_s32k(uint32_t nticks) {
