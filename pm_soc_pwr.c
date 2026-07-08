@@ -73,6 +73,7 @@ void pm_soc_set_dcdc_voltage(int32_t millivolts)
 void pm_soc_enable_syst_sram(uint32_t sram_select)
 {
 #if defined(ENSEMBLE_SOC_E1C)
+    (void)sram_select;
     return; /* not applicable for this family */
 #else
     uint32_t mask, reg_data;
@@ -176,6 +177,7 @@ void pm_soc_retain_syst_sram(uint32_t retention_select)
     reg_data &= ~(retention_select & mask); /* clear bits for SRAM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
 #else
+    (void)retention_select;
     return; /* only applicable for Ensemble E4/E6/E8 */
 #endif
 }
@@ -208,6 +210,7 @@ void pm_soc_disable_pd_debug()
 void pm_soc_enable_pd_sram_aon(uint32_t retention_select)
 {
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    (void)retention_select;
     return; /* not applicable for these families */
 #else
     /* Enable PD1 via VBATSEC PWR_CTRL regiser */
@@ -260,6 +263,7 @@ void pm_soc_disable_pd_sram_aon()
 void pm_soc_enable_pd4_sram(uint32_t clk_sel)
 {
 #if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+    (void)clk_sel;
     return; /* not applicable for these families */
 #else
     /* Switch PD4 between HFXO and PLL-160M clock */
