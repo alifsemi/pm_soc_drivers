@@ -1,3 +1,4 @@
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
 #include <stdint.h>
 #include <stdbool.h>
 
@@ -44,3 +45,4 @@ void AUDIOPLL_initialize(uint32_t xtal_freq);
   @return   None
 */
 void AUDIOPLL_uninitialize();
+#endif

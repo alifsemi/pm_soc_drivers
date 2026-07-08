@@ -1,7 +1,7 @@
+#if defined(ENSEMBLE_SOC_GEN2) || defined(ENSEMBLE_SOC_E1C)
+#include "drv_audiopll.h"
 #include "soc_aon.h"
 #include "soc_vbat.h"
-#include "drv_mcupll.h"
-#include "drv_audiopll.h"
 
 /* for sys_busy_loop_us() function */
 #include "sys_utils.h"
@@ -102,3 +102,4 @@ void AUDIOPLL_uninitialize()
     VBATSEC2->SEL_AUDIO_PLL = 0;
     AUDIOPLL_clkpll_stop();
 }
+#endif
