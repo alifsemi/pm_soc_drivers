@@ -64,36 +64,37 @@ uint32_t s32k_cntr_val();
 uint64_t s32k_cntr_val64();
 
 /**
-  @fn       void delay_ms_s32k(uint32_t nticks)
+  @fn       void delay_ms_s32k(uint32_t milliseconds)
   @brief    Busy-wait for the requested number of milliseconds using the
             S32K (32.768 kHz) counter as the time base.
   @note     s32k_cntr_init() must have been called beforehand.
-  @param    nticks  delay duration in milliseconds
+  @param    milliseconds  delay duration in milliseconds
   @return   None
 */
-void delay_ms_s32k(uint32_t nticks);
+void delay_ms_s32k(uint32_t milliseconds);
+void delay_ms_s32k_sleep(uint32_t milliseconds);
 
 /**
-  @fn       void delay_us_s32k(uint32_t nticks)
+  @fn       void delay_us_s32k(uint32_t microseconds)
   @brief    Busy-wait for the requested number of microseconds using the
             S32K (32.768 kHz) counter as the time base. Resolution is
             limited by the 32.768 kHz tick (~30.5 us).
   @note     s32k_cntr_init() must have been called beforehand.
-  @param    nticks  delay duration in microseconds
+  @param    microseconds  delay duration in microseconds
   @return   None
 */
-void delay_us_s32k(uint32_t nticks);
+void delay_us_s32k(uint32_t microseconds);
 
 /**
-  @fn       void delay_us_refclk(uint32_t nticks)
+  @fn       void delay_us_refclk(uint32_t microseconds)
   @brief    Busy-wait for the requested number of microseconds using the
             REFCLK counter as the time base, deriving the tick count from
             the programmed REFCLK frequency.
   @note     refclk_cntr_init() must have been called beforehand.
-  @param    nticks  delay duration in microseconds
+  @param    microseconds  delay duration in microseconds
   @return   None
 */
-void delay_us_refclk(uint32_t nticks);
+void delay_us_refclk(uint32_t microseconds);
 
 /**
   @fn       void refclk_cntr_enable_cntbase(uint32_t cntbase)
