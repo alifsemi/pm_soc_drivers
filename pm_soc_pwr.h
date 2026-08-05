@@ -25,9 +25,7 @@
  * to retain both. */
 #define PD3_RETAIN_ITCM_128KB (3U << 4)                           /* RET1 */
 #define PD3_RETAIN_ITCM_256KB ((3U << 6) | PD3_RETAIN_ITCM_128KB) /* RET1 + RET2 */
-
-#define PD3_RETAIN_DTCM_128KB (3U << 4)                           /* RET1 */
-#define PD3_RETAIN_DTCM_256KB ((3U << 6) | PD3_RETAIN_DTCM_128KB) /* RET1 + RET2 */
+#define PD3_RETAIN_DTCM_256KB PD3_RETAIN_ITCM_256KB               /* RET1 + RET2 */
 
 #endif
 
