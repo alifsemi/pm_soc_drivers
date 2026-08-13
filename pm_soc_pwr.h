@@ -6,10 +6,10 @@
  * the hardware polarity internally. Sizes are cumulative: each larger macro
  * OR-s in the smaller one, and an ITCM macro may be OR-ed with a DTCM macro
  * to retain both. */
-#define PD3_RETAIN_ITCM_64KB  (1U << 1)                           /* A1 */
-#define PD3_RETAIN_ITCM_128KB ((1U << 3) | PD3_RETAIN_ITCM_64KB)  /* A1 + B */
-#define PD3_RETAIN_ITCM_256KB ((1U << 4) | PD3_RETAIN_ITCM_128KB) /* A1 + B + C */
-#define PD3_RETAIN_ITCM_512KB ((1U << 5) | PD3_RETAIN_ITCM_256KB) /* A1 + B + C + D */
+#define PD3_RETAIN_ITCM_64KB   (1U << 1)                           /* A1 */
+#define PD3_RETAIN_ITCM_128KB  ((1U << 3) | PD3_RETAIN_ITCM_64KB)  /* A1 + B */
+#define PD3_RETAIN_ITCM_256KB  ((1U << 4) | PD3_RETAIN_ITCM_128KB) /* A1 + B + C */
+#define PD3_RETAIN_ITCM_512KB  ((1U << 5) | PD3_RETAIN_ITCM_256KB) /* A1 + B + C + D */
 
 #define PD3_RETAIN_DTCM_64KB   (3U << 1)                           /* A1 + A2 */
 #define PD3_RETAIN_DTCM_128KB  ((1U << 3) | PD3_RETAIN_DTCM_64KB)  /* A1 + A2 + B */

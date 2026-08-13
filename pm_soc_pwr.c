@@ -192,9 +192,18 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
     reg_data = VBATALL->RET_CTRL;
 
     /* HW polarity: 1=retain (matches the macro bits directly) */
-    reg_data &= ~(mask);                   /* clear retention bits 1..6 (no retention by default) */
-    reg_data |= (retention_select & mask); /* set bits for TCM blocks to retain */
+    reg_data &= ~(mask);                    /* clear retention bits 1..6 (no retention by default) */
+    reg_data |= (retention_select & mask);  /* set bits for TCM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
+
+    /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
+    if (retention_select) {
+        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+    }
+    else {
+        /* enable the LDO if requested, but do not disable because
+         * RET_LDO_MAIN is shared with HE TCM and SE RAM */
+    }
 #else
     uint32_t mask, reg_data;
     mask = VBATALL_RET_CTRL_HETCM_RET1_MASK_Msk | VBATALL_RET_CTRL_HETCM_RET1_FORCE_Msk |
@@ -205,6 +214,15 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
     reg_data |= mask;                       /* set retention bits 4..7 (no retention by default) */
     reg_data &= ~(retention_select & mask); /* clear bits for TCM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
+
+    /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
+    if (retention_select) {
+        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+    }
+    else {
+        /* enable the LDO if requested, but do not disable because
+         * RET_LDO_MAIN is shared with HE TCM, SYST Bulk SRAM, and SE RAM */
+    }
 #endif
 }
 
@@ -223,6 +241,15 @@ void pm_soc_retain_syst_sram(uint32_t retention_select)
     reg_data |= mask;                       /* set retention bits 8..17 (no retention by default) */
     reg_data &= ~(retention_select & mask); /* clear bits for SRAM blocks to retain */
     VBATALL->RET_CTRL = reg_data;
+
+    /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
+    if (retention_select) {
+        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+    }
+    else {
+        /* enable the LDO if requested, but do not disable because
+         * RET_LDO_MAIN is shared with HE TCM, SYST Bulk SRAM, and SE RAM */
+    }
 #else
     (void)retention_select;
     return; /* only applicable for Ensemble E4/E6/E8 */
