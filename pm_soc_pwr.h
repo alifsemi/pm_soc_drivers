@@ -43,6 +43,9 @@
 #define PD6_RETAIN_SRAM0_4096KB ((3U << 14) | PD6_RETAIN_SRAM0_2048KB)
 #define PD6_RETAIN_SRAM1_4096KB (3U << 16)
 
+/* Present in all ENSEMBLE variants */
+#define PD6_RETAIN_BKRAM_4KB    1
+
 /* refer to @note in pm_soc_enable_syst_sram() */
 #define PD6_ENABLE_SRAM0 1
 #define PD6_ENABLE_SRAM1 2
@@ -161,6 +164,16 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select);
   @return   None
 */
 void pm_soc_retain_syst_sram(uint32_t retention_select);
+
+/**
+  @fn       void pm_soc_retain_backup_ram(uint32_t retention_en)
+  @brief    Control whether the PD6 SYST BACKUP RAM contents survive
+            while PD6 SYST is OFF in RUN Mode, STANDBY Mode, or STOP Mode.
+            Refer to "RET_CTRL Register" in HWRM for more details.
+  @param    retention_en    PD6_RETAIN_BKRAM_4KB
+  @return   None
+*/
+void pm_soc_retain_backup_ram(uint32_t retention_en);
 
 /* Power Domain Controls for PD6 SYST and PD8 DBSS */
 

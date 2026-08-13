@@ -135,6 +135,53 @@ void pm_soc_enable_syst_sram(uint32_t sram_select)
 #endif
 }
 
+void pm_soc_retain_backup_ram(uint32_t retention_en)
+{
+#if defined(ENSEMBLE_SOC_E1C)
+    uint32_t mask, reg_data;
+    mask = VBATALL_RET_CTRL_BKRAM_RET_EN_Msk;
+    reg_data = VBATALL->RET_CTRL;
+
+    /* HW polarity: 1=retain (matches the macro bits directly) */
+    if (retention_en) {
+        reg_data |= mask;                   /* set retention bits 0..1 (retention en) */
+    }
+    else {
+        reg_data &= ~mask;                  /* clear retention bits 0..1 (no retention) */
+    }
+    VBATALL->RET_CTRL = reg_data;
+
+    /* HW polarity: 0=RET_LDO_VBAT enabled, 1=RET_LDO_VBAT disabled */
+    if (retention_en) {
+        VBATSEC->PWR_CTRL &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+    }
+    else {
+        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+    }
+#else
+    uint32_t mask, reg_data;
+    mask = VBATALL_RET_CTRL_BKRAM_RET_MASK_Msk | VBATALL_RET_CTRL_BKRAM_RET_FORCE_Msk;
+    reg_data = VBATALL->RET_CTRL;
+
+    /* HW polarity: 0=retain (function inverts the caller's mask) */
+    if (retention_en) {
+        reg_data &= ~mask;                  /* clear retention bits 0..1 (retention en) */
+    }
+    else {
+        reg_data |= mask;                   /* set retention bits 0..1 (no retention) */
+    }
+    VBATALL->RET_CTRL = reg_data;
+
+    /* HW polarity: 0=RET_LDO_VBAT disabled, 1=RET_LDO_VBAT enabled */
+    if (retention_en) {
+        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+    }
+    else {
+        VBATSEC->PWR_CTRL &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+    }
+#endif
+}
+
 void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 {
 #if defined(ENSEMBLE_SOC_E1C)
