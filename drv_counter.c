@@ -1,5 +1,5 @@
 #include "drv_counter.h"
-#include "pm_core.h"
+#include "pm.h"
 #include "pm_soc_clk.h"
 #include "soc_hostbase.h"
 
