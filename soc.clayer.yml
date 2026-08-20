@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Open-CMSIS-Pack/devtools/tools/projmgr/2.12.0/tools/projmgr/schemas/clayer.schema.json
+layer:
+  type: Drivers
+  groups:
+    - group: Drivers
+      files:
+        - file: drv_audiopll.c
+        - file: drv_cgu.c
+        - file: drv_counter.c
+        - file: drv_mcupll.c
+        - file: pm_soc_clk.c
+        - file: pm_soc_pwr.c
+        - file: pm_soc_rst.c
+  add-path:
+    - .
