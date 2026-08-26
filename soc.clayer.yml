@@ -5,9 +5,11 @@ layer:
     - group: Drivers
       files:
         - file: drv_audiopll.c
+        - file: drv_bkram.c
         - file: drv_cgu.c
         - file: drv_counter.c
         - file: drv_mcupll.c
+        - file: drv_mhu.c
         - file: pm_soc_clk.c
         - file: pm_soc_pwr.c
         - file: pm_soc_rst.c
