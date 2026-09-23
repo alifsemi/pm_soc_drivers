@@ -153,10 +153,10 @@ void pm_soc_retain_backup_ram(uint32_t retention_en)
 
     /* HW polarity: 0=RET_LDO_VBAT enabled, 1=RET_LDO_VBAT disabled */
     if (retention_en) {
-        VBATSEC->PWR_CTRL &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
     }
     else {
-        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
     }
 #else
     uint32_t mask, reg_data;
@@ -174,10 +174,10 @@ void pm_soc_retain_backup_ram(uint32_t retention_en)
 
     /* HW polarity: 0=RET_LDO_VBAT disabled, 1=RET_LDO_VBAT enabled */
     if (retention_en) {
-        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 |= VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
     }
     else {
-        VBATSEC->PWR_CTRL &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 &= ~VBATSEC_VBAT_ANA_REG1_RET_LDO_VBAT_EN_Msk;
     }
 #endif
 }
@@ -198,7 +198,7 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 
     /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
     if (retention_select) {
-        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
     }
     else {
         /* enable the LDO if requested, but do not disable because
@@ -217,7 +217,7 @@ void pm_soc_retain_rtss_he_tcm(uint32_t retention_select)
 
     /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
     if (retention_select) {
-        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
     }
     else {
         /* enable the LDO if requested, but do not disable because
@@ -244,7 +244,7 @@ void pm_soc_retain_syst_sram(uint32_t retention_select)
 
     /* HW polarity: 0=RET_LDO_MAIN disabled, 1=RET_LDO_MAIN enabled */
     if (retention_select) {
-        VBATSEC->PWR_CTRL |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
+        VBATSEC->VBAT_ANA_REG1 |= VBATSEC_VBAT_ANA_REG1_RET_LDO_MAIN_EN_Msk;
     }
     else {
         /* enable the LDO if requested, but do not disable because
