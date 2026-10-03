@@ -132,28 +132,28 @@ void s32k_cntr_disable_cntbase_intr(uint32_t cntbase) {
     NVIC_DisableIRQ(71 + cntbase);
 }
 
-void REFCLK_CNTBASE0_IRQHandler() {
+__attribute__((weak)) void REFCLK_CNTBASE0_IRQHandler() {
     refclk_cntr_disable_cntbase_intr(0);
 }
 
-void REFCLK_CNTBASE1_IRQHandler() {
+__attribute__((weak)) void REFCLK_CNTBASE1_IRQHandler() {
     refclk_cntr_disable_cntbase_intr(1);
 }
 
-void REFCLK_CNTBASE2_IRQHandler() {
+__attribute__((weak)) void REFCLK_CNTBASE2_IRQHandler() {
     refclk_cntr_disable_cntbase_intr(2);
 }
 
-void REFCLK_CNTBASE3_IRQHandler() {
+__attribute__((weak)) void REFCLK_CNTBASE3_IRQHandler() {
     refclk_cntr_disable_cntbase_intr(3);
 }
 
-void S32K_CNTBASE0_IRQHandler() {
+__attribute__((weak)) void S32K_CNTBASE0_IRQHandler() {
     s32k_done = 1;
     s32k_cntr_disable_cntbase_intr(0);
 }
 
-void S32K_CNTBASE1_IRQHandler() {
+__attribute__((weak)) void S32K_CNTBASE1_IRQHandler() {
     s32k_done = 1;
     s32k_cntr_disable_cntbase_intr(1);
 }
